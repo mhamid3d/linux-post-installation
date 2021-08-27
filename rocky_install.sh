@@ -160,6 +160,12 @@ function stage3 () {
 
 	cp -r /tmp/bootstrap_tmp/data/ktoa-3.2.2.1-kat4.0-linux /builds/
 
+	cd /tmp/bootstrap_tmp
+	wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_DEVKIT_Linux.tgz
+	mkdir -p /builds/MayaDevkit/2022
+	mv devkitBase /builds/MayaDevkit/2022
+
+
 	#SNAP APPS
 	echo "[Step 13] ...... Installing Snap"
 	sudo yum -y install snapd

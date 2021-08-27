@@ -94,7 +94,7 @@ function stage1 () {
 	sudo mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img
 	sudo dracut /boot/initramfs-$(uname -r).img $(uname -r)
 
-	echo "stage2" >> /tmp/bootstrap_tmp/.stage
+	echo "stage2" > /tmp/bootstrap_tmp/.stage
 
 	echo "Restart your machine before continuing. DO NOT LOGIN FOR STAGE 2, ENTER TERMINAL MODE AND RUN THE SCRIPT TO CONTINUE"
 
@@ -110,7 +110,7 @@ function stage2 () {
 	chmod +x ./NVIDIA-Linux-x86_64-*.run
 	sudo ./NVIDIA-Linux-x86_64-*.run
 
-	echo "stage3" >> /tmp/bootstrap_tmp/.stage
+	echo "stage3" > /tmp/bootstrap_tmp/.stage
 	
 	echo "Restart your machine before continuing. YOU CAN USE GUI MODE FROM HERE"
 }

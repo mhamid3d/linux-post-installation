@@ -222,6 +222,7 @@ function stage3 () {
 	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
 	sudo tar -C /opt -zxvf rv-centos7-x86-64-2021.1.0.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-2021.1.0 /opt/RV-2021.1.0
+
 }
 
 

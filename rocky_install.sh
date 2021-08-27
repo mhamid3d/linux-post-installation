@@ -34,7 +34,7 @@ function stage1 () {
 	sudo yum -y groupinstall "Development Tools"
 
 	sudo yum -y install gnome-tweaks dconf-editor
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel gcc-toolset-9-gcc gcc-toolset-9-gcc-c++ tcsh libgcrypt-devel libXScrnSaver
 
 
 	# BASIC GNOME SETTINGS
@@ -175,6 +175,53 @@ function stage3 () {
 	sudo snap install snap-store
 	sudo snap install code --classic
 	sudo snap install discord audacity vlc postman inkscape
+
+	#USD
+	echo "[Step 14] ...... Installing USD"
+	conda activate cometpy37
+	mkdir ~/workspace
+	git clone -b v21.08 https://github.com/PixarAnimationStudios/USD.git
+	sudo mkdir /opt/USD
+	sudo chmod -R 777 /opt/USD
+	source /opt/rh/gcc-toolset-9/enable
+	cd ~/workspace/USD
+	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
+
+	#FOUNDRY PRODUCTS
+	echo "[Step 15] ...... Installing Foundry Products"
+	cd /tmp/bootstrap_tmp
+	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.0v4/Nuke13.0v4-linux-x86_64.tgz
+	wget https://thefoundry.s3.amazonaws.com/products/modo/15.1v1/Modo15.1v1_Linux.run
+	wget https://thefoundry.s3.amazonaws.com/products/mari/releases/4.7v4/Mari4.7v4-linux-x86-release-64.run
+	wget https://thefoundry.s3.amazonaws.com/products/katana/releases/4.0v5/Katana4.0v5-linux-x86-release-64.tgz
+
+	tar -zxvf Nuke13.0v4-linux-x86_64.tgz
+	mkdir ./katana
+	tar -C ./katana -zxvf Katana4.0v5-linux-x86-release-64.tgz
+	tar -zxvf Nuke13.0v4-linux-x86_64.tgz
+
+	chmod +x ./Mari4.7v4-linux-x86-release-64.run
+	chmod +x ./Modo15.1v1_Linux.run
+	chmod +x ./katana/install.sh
+	chmod +x ./Nuke13.0v4-linux-x86_64.run
+
+	sudo mkdir /opt/Mari4.7v4
+	sudo mkdir /opt/Modo15.1v1
+	sudo mkdir /opt/Katana4.0v5
+	sudo mkdir /opt/Nuke13.0v4
+
+	sudo ./Nuke13.0v4-linux-x86_64.run --prefix=/opt --accept-foundry-eula
+	sudo ./Mari4.7v4-linux-x86-release-64.run --prefix=/opt/Mari4.7v4 --accept-eula
+	sudo ./Modo15.1v1_Linux.run --accept-eula --target /opt/Modo15.1v1
+	cd katana
+	sudo ./install.sh --no-3delight --accept-eula --katana-path /opt/Katana4.0v5
+
+	#RV SOFTWARE
+	echo "[Step 16] ...... Installing RV Player"
+	cd /tmp/bootstrap_tmp
+	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
+	sudo tar -C /opt -zxvf rv-centos7-x86-64-2021.1.0.tar.gz
+	sudo mv /opt/rv-centos7-x86-64-2021.1.0 /opt/RV-2021.1.0
 }
 
 
@@ -190,4 +237,3 @@ function bootstrap_enter() {
 
 
 bootstrap_enter
-

@@ -27,7 +27,7 @@ function stage1 () {
 
 	sudo yum -y update
 	sudo yum -y install epel-release
-	sudo yum -y yum-utils
+	sudo yum -y install yum-utils
 	sudo yum-config-manager --enable powertools
 	sudo yum -y update
 	

@@ -176,7 +176,10 @@ function stage3 () {
 	wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_DEVKIT_Linux.tgz
 	mkdir -p /builds/MayaDevkit/2022
 	mv devkitBase /builds/MayaDevkit/2022
-
+	
+	wget https://peregrinelabs-deploy.s3.amazonaws.com/Bokeh/1.4.8/Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
+	tar -C /builds -zxvf Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
+	mv /builds/Bokeh-v1.4.8_Nuke13.0-linux /builds/pgBokeh-v1.4.8
 
 	#SNAP APPS
 	echo "[Step 13] ...... Installing Snap"
@@ -216,6 +219,14 @@ function stage3 () {
 	sudo ./Modo15.1v1_Linux.run --accept-eula --target /opt/Modo15.1v1
 	cd katana
 	sudo ./install.sh --no-3delight --accept-eula --katana-path /opt/Katana4.0v5
+	
+	#SUBSTANCE PRODUCTS
+	cd /tmp/bootstrap_tmp/data
+	sudo yum -y install ./Substance_Designer-11.1.2-4593-linux-x64-standard.rpm
+	sudo yum -y install ./Substance_Painter-7.1.1-954-linux-x64-standard.rpm
+	sudo cp ./Substance_Patches/Substance\ Painter /opt/Allegorithmic/Substance_Painter/Substance\ Painter
+	sudo cp ./Substance_Patches/Substance\ Designer /opt/Allegorithmic/Substance_Designer/Substance\ Designer
+	
 
 	#RV SOFTWARE
 	echo "[Step 15] ...... Installing RV Player"
@@ -225,15 +236,24 @@ function stage3 () {
 	sudo mv /opt/rv-centos7-x86-64-2021.1.0 /opt/RV-2021.1.0
 
 	#TLM SERVER
-	echo "[Step 16] ...... Installing TLM License Server"
-	cd /tmp/bootstrap_tmp/data
-	sudo cp -r ./TLM /opt/
-	sudo chmod -R 777 /opt/TLM/
-	cd /opt/TLM/scripts
-	sudo ./install_tlmserver
-	sudo systemctl daemon-reload
-	sudo systemctl restart tlmd
-	sudo systemctl enable tlmd
+	#echo "[Step 16] ...... Installing TLM License Server"
+	#cd /tmp/bootstrap_tmp/data
+	#sudo cp -r ./TLM /opt/
+	#sudo chmod -R 777 /opt/TLM/
+	#cd /opt/TLM/scripts
+	#sudo ./install_tlmserver
+	#sudo systemctl daemon-reload
+	#sudo systemctl restart tlmd
+	#sudo systemctl enable tlmd
+	
+	#MAYA
+	echo "[Step 16] ...... Installing MAYA"
+	cd /tmp/bootstrap_tmp/data/Maya2022
+	sudo yum -y install ./Maya2022_64-2022.0-217.x86_64.rpm
+	sudo cp ./maya.bin /usr/autodesk/maya2022/bin/maya.bin
+	sudo mv /usr/autodesk/maya2022/bin/ADPClientService /usr/autodesk/maya2022/bin/ADPClientService_NOTHANKYOU
+	mkdir -p ~/.autodesk/UI/Autodesk/ADPSDK/JSON/
+	sudo chmod -rwx /home/mhamid/.autodesk/UI/Autodesk/ADPSDK/JSON/
 
 	#USD
 	echo "[Step 17] ...... Installing USD"
@@ -242,11 +262,40 @@ function stage3 () {
 	git clone -b v21.08 https://github.com/PixarAnimationStudios/USD.git
 	sudo mkdir /opt/USD
 	sudo chmod -R 777 /opt/USD
+	conda activate cometpy37
 	#source /opt/rh/gcc-toolset-9/enable
 	source /opt/rh/devtoolset-9/enable
 	conda activate cometpy37
 	cd ~/workspace/USD
 	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
+	
+	cd ~/workspace
+	git clone -b v0.12.0 https://github.com/Autodesk/maya-usd.git
+	cd maya-usd
+	mkdir workspace
+	python build.py --build-args=-DBUILD_WITH_PYTHON_3=ON,-DBUILD_AL_PLUGIN=OFF,-DBUILD_STRICT_MODE=OFF --maya-location /usr/autodesk/maya2022 --pxrusd-location /opt/USD --devkit-location /builds/MayaDevkit/2022/devkitBase --qt-location /home/mhamid/anaconda/envs/cometpy37/lib workspace/
+	sudo mkdir -p /usr/autodesk/mayausd/2022/
+	sudo cp -r workspace/install/RelWithDebInfo/ /usr/autodesk/mayausd/2022/0.12.0
+	sudo mv /usr/autodesk/mayausd/2022/0.12.0/plugin/pxr/lib/python/pxr/UsdMaya /opt/USD/lib/python/pxr/
+	sudo chown mhamid:mhamid /opt/USD/lib/python/pxr/UsdMaya/
+	sudo rm -rf /usr/autodesk/mayausd/2022/0.12.0/plugin/pxr/lib/python/pxr
+	sudo mkdir -p /usr/autodesk/modules/maya/2022/
+	sudo ln -s /usr/autodesk/mayausd/2022/0.12.0/pxrUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo ln -s /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.12.0/pxrUSD.mod
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod
+	
+	#COMETPIPELINE
+	echo "[Step 18] ...... Pulling CometPipeline"
+	conda activate cometpy37
+	git config --global credential.helper store
+	mkdir ~/_dev
+	cd ~/_dev
+	git clone https://github.com/CometPipeline/cometpipeline.git
+	git clone https://github.com/CometPipeline/cometpipeline-dcc.git
+	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_activate.sh ~/anaconda/envs/cometpy37/etc/conda/activate.d/site_env_activate.sh
+	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
+
 }
 
 

@@ -34,7 +34,10 @@ function stage1 () {
 	sudo yum -y groupinstall "Development Tools"
 
 	sudo yum -y install gnome-tweaks dconf-editor
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel gcc-toolset-9-gcc gcc-toolset-9-gcc-c++ tcsh libgcrypt-devel libXScrnSaver
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel tcsh libgcrypt-devel libXScrnSaver
+	#sudo yum -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
+	sudo yum -y install centos-release-scl-rh
+	sudo yum -y install devtoolset-9
 
 
 	# BASIC GNOME SETTINGS
@@ -42,10 +45,12 @@ function stage1 () {
 	gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
 	gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
 	gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
-	gsettings set org.gnome.shell enabled-extensions "['desktop-icons@gnome-shell-extensions.gcampax.github.com']"
+	#gsettings set org.gnome.shell enabled-extensions "['desktop-icons@gnome-shell-extensions.gcampax.github.com']"
+	gsettings set org.gnome.shell enabled-extensions "['top-icons@gnome-shell-extensions.gcampax.github.com']"
 	dconf write /org/gtk/settings/file-chooser/show-hidden true
 	gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
 	gsettings set org.gnome.nautilus.preferences default-folder-viewer 'icon-view'
+	gsettings set org.gnome.desktop.background show-desktop-icons true
 
 
 	# CHROME
@@ -59,12 +64,13 @@ function stage1 () {
 	# UPDATE FAVORITE APPS, ONLY TERMINAL, CHROME, AND FILES
 	echo "[Step 4] ...... Setting favorite apps"
 	gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
+	
 
 	# INSTALL EXTENSIONS
 	echo "[Step 5] ...... Installing gnome shell extensions"
 	install_shell_ext dash-to-paneljderose9.github.com.v42.shell-extension.zip
 	install_shell_ext system-monitorparadoxxx.zero.gmail.com.v39.shell-extension.zip
-	install_shell_ext tray-iconszhangkaizhao.com.v6.shell-extension.zip
+	#install_shell_ext tray-iconszhangkaizhao.com.v6.shell-extension.zip
 	install_shell_ext services-systemdabteil.org.v19.shell-extension.zip
 
 	#EXTENSION SETTINGS
@@ -105,6 +111,7 @@ function stage2 () {
 
 	#INSTALL NVIDIA DRIVERS
 	echo "[Step 8] ...... Installing NVIDIA drivers"
+	sudo systemctl isolate multi-user.target
 	cd /tmp/bootstrap_tmp
 	wget https://us.download.nvidia.com/XFree86/Linux-x86_64/470.63.01/NVIDIA-Linux-x86_64-470.63.01.run
 	chmod +x ./NVIDIA-Linux-x86_64-*.run
@@ -180,10 +187,12 @@ function stage3 () {
 	echo "[Step 14] ...... Installing USD"
 	conda activate cometpy37
 	mkdir ~/workspace
+	cd ~/workspace
 	git clone -b v21.08 https://github.com/PixarAnimationStudios/USD.git
 	sudo mkdir /opt/USD
 	sudo chmod -R 777 /opt/USD
-	source /opt/rh/gcc-toolset-9/enable
+	#source /opt/rh/gcc-toolset-9/enable
+	scl enable devtoolset-9 bash
 	cd ~/workspace/USD
 	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 
@@ -220,7 +229,7 @@ function stage3 () {
 	echo "[Step 16] ...... Installing RV Player"
 	cd /tmp/bootstrap_tmp
 	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
-	sudo tar -C /opt -zxvf rv-centos7-x86-64-2021.1.0.tar.gz
+	sudo tar -C /opt -zxvf Linux-release.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-2021.1.0 /opt/RV-2021.1.0
 
 }

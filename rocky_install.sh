@@ -253,7 +253,7 @@ function stage3 () {
 	sudo cp ./maya.bin /usr/autodesk/maya2022/bin/maya.bin
 	sudo mv /usr/autodesk/maya2022/bin/ADPClientService /usr/autodesk/maya2022/bin/ADPClientService_NOTHANKYOU
 	mkdir -p ~/.autodesk/UI/Autodesk/ADPSDK/JSON/
-	sudo chmod -rwx /home/mhamid/.autodesk/UI/Autodesk/ADPSDK/JSON/
+	sudo chmod a-rwx /home/mhamid/.autodesk/UI/Autodesk/ADPSDK/JSON/
 
 	#USD
 	echo "[Step 17] ...... Installing USD"
@@ -295,6 +295,12 @@ function stage3 () {
 	git clone https://github.com/CometPipeline/cometpipeline-dcc.git
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_activate.sh ~/anaconda/envs/cometpy37/etc/conda/activate.d/site_env_activate.sh
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
+
+	echo "\n INSTALL DONE!!!"
+	echo "\n"
+	echo "\n Please manually do the following tasks:"
+	echo "\n 	1) Adjust paths in pxrUSD.mod and mayaUSD.mod to fix their paths"
+	echo "\n	2) Generate license.gto file from windows and place it /opt/RV-*/etc/"
 
 }
 

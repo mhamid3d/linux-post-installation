@@ -83,6 +83,11 @@ function stage1 () {
 	gsettings set org.gnome.shell.extensions.system-monitor memory-graph-width 85
 	gsettings set org.gnome.shell.extensions.system-monitor net-graph-width 85
 
+	cd ~/Pictures
+	wget https://wallpaperaccess.com/full/203551.jpg
+	dconf write /org/gnome/desktop/background/picture-uri "'file:///home/mhamid/Pictures/203551.jpg'"
+	
+
 	#DISABLE SELINUX
 	echo "[Step 7] ...... Disabling SELINUX"
 	sudo setenfore 0
@@ -245,13 +250,18 @@ function stage3 () {
 
 
 function bootstrap_enter() {
-	if [ -f /tmp/bootstrap_tmp/.stage ]
+	if [[ "${BASH_SOURCE[0]}" != "${0}" ]]
 	then
-	current_stage=`cat /tmp/bootstrap_tmp/.stage`
-	eval $current_stage
+		if [ -f /tmp/bootstrap_tmp/.stage ]
+		then
+		current_stage=`cat /tmp/bootstrap_tmp/.stage`
+		eval $current_stage
+		else
+		stage1
+		fi
 	else
-	stage1
-	fi
+	echo "You must source this script: 'source ./<script>.sh"
+	fi;
 }
 
 

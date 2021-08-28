@@ -284,6 +284,8 @@ function stage3 () {
 	sudo ln -s /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod /usr/autodesk/modules/maya/2022/
 	sudo chmod 777 /usr/autodesk/mayausd/2022/0.12.0/pxrUSD.mod
 	sudo chmod 777 /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.12.0#g' /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.12.0#g' /usr/autodesk/mayausd/2022/0.12.0/pxrUSD.mod
 	
 	#COMETPIPELINE
 	echo "[Step 18] ...... Pulling CometPipeline"
@@ -299,8 +301,7 @@ function stage3 () {
 	echo "\n INSTALL DONE!!!"
 	echo "\n"
 	echo "\n Please manually do the following tasks:"
-	echo "\n 	1) Adjust paths in pxrUSD.mod and mayaUSD.mod to fix their paths"
-	echo "\n	2) Generate license.gto file from windows and place it /opt/RV-*/etc/"
+	echo "\n	1) Generate license.gto file from windows and place it /opt/RV-*/etc/"
 
 }
 

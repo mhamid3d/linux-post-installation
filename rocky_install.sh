@@ -188,21 +188,8 @@ function stage3 () {
 	sudo snap install code --classic
 	sudo snap install discord audacity vlc postman inkscape
 
-	#USD
-	echo "[Step 14] ...... Installing USD"
-	mkdir ~/workspace
-	cd ~/workspace
-	git clone -b v21.08 https://github.com/PixarAnimationStudios/USD.git
-	sudo mkdir /opt/USD
-	sudo chmod -R 777 /opt/USD
-	#source /opt/rh/gcc-toolset-9/enable
-	scl enable devtoolset-9 bash
-	conda activate cometpy37
-	cd ~/workspace/USD
-	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
-
 	#FOUNDRY PRODUCTS
-	echo "[Step 15] ...... Installing Foundry Products"
+	echo "[Step 14] ...... Installing Foundry Products"
 	cd /tmp/bootstrap_tmp
 	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.0v4/Nuke13.0v4-linux-x86_64.tgz
 	wget https://thefoundry.s3.amazonaws.com/products/modo/15.1v1/Modo15.1v1_Linux.run
@@ -231,21 +218,35 @@ function stage3 () {
 	sudo ./install.sh --no-3delight --accept-eula --katana-path /opt/Katana4.0v5
 
 	#RV SOFTWARE
-	echo "[Step 16] ...... Installing RV Player"
+	echo "[Step 15] ...... Installing RV Player"
 	cd /tmp/bootstrap_tmp
 	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
 	sudo tar -C /opt -zxvf Linux-release.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-2021.1.0 /opt/RV-2021.1.0
 
 	#TLM SERVER
-	echo "[Step 17] ...... Installing TLM License Server"
+	echo "[Step 16] ...... Installing TLM License Server"
 	cd /tmp/bootstrap_tmp/data
 	sudo cp -r ./TLM /opt/
+	sudo chmod -R 777 /opt/TLM/
 	cd /opt/TLM/scripts
 	sudo ./install_tlmserver
 	sudo systemctl daemon-reload
 	sudo systemctl restart tlmd
 	sudo systemctl enable tlmd
+
+	#USD
+	echo "[Step 17] ...... Installing USD"
+	mkdir ~/workspace
+	cd ~/workspace
+	git clone -b v21.08 https://github.com/PixarAnimationStudios/USD.git
+	sudo mkdir /opt/USD
+	sudo chmod -R 777 /opt/USD
+	#source /opt/rh/gcc-toolset-9/enable
+	source /opt/rh/devtoolset-9/enable
+	conda activate cometpy37
+	cd ~/workspace/USD
+	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 }
 
 

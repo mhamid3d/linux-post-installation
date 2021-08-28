@@ -232,6 +232,15 @@ function stage3 () {
 	sudo tar -C /opt -zxvf Linux-release.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-2021.1.0 /opt/RV-2021.1.0
 
+	#TLM SERVER
+	echo "[Step 17] ...... Installing TLM License Server"
+	cd /tmp/bootstrap_tmp/data
+	sudo cp -r ./TLM /opt/
+	cd /opt/TLM/scripts
+	sudo ./install_tlmserver
+	sudo systemctl daemon-reload
+	sudo systemctl restart tlmd
+	sudo systemctl enable tlmd
 }
 
 

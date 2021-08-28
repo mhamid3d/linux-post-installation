@@ -38,7 +38,10 @@ function stage1 () {
 	#sudo yum -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
-
+	
+	sudo mkdir -p /mnt/mhamid/Main
+	sudo chmod -R 777 /mnt/mhamid
+	sudo echo "/dev/sda2	/mnt/mhamid/Main	ntfs-3g defaults	0 0" >> /etc/fstab
 
 	# BASIC GNOME SETTINGS
 	echo "[Step 2] ...... Setting gnome shell settings"
@@ -297,6 +300,8 @@ function stage3 () {
 	git clone https://github.com/CometPipeline/cometpipeline-dcc.git
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_activate.sh ~/anaconda/envs/cometpy37/etc/conda/activate.d/site_env_activate.sh
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
+	
+	cp /tmp/bootstrap_tmp/data/.bashrc ~/.bashrc
 
 	echo "\n INSTALL DONE!!!"
 	echo "\n"

@@ -190,7 +190,6 @@ function stage3 () {
 
 	#USD
 	echo "[Step 14] ...... Installing USD"
-	conda activate cometpy37
 	mkdir ~/workspace
 	cd ~/workspace
 	git clone -b v21.08 https://github.com/PixarAnimationStudios/USD.git
@@ -198,6 +197,7 @@ function stage3 () {
 	sudo chmod -R 777 /opt/USD
 	#source /opt/rh/gcc-toolset-9/enable
 	scl enable devtoolset-9 bash
+	conda activate cometpy37
 	cd ~/workspace/USD
 	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 

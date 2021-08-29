@@ -258,6 +258,7 @@ function stage3 () {
 	sudo mv /usr/autodesk/maya2022/bin/ADPClientService /usr/autodesk/maya2022/bin/ADPClientService_NOTHANKYOU
 	mkdir -p ~/.autodesk/UI/Autodesk/ADPSDK/JSON/
 	sudo chmod a-rwx /home/mhamid/.autodesk/UI/Autodesk/ADPSDK/JSON/
+	sudo /usr/autodesk/maya2022/bin/mayapy -m pip install pymel
 
 	#USD
 	echo "[Step 17] ...... Installing USD"

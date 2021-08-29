@@ -1,3 +1,4 @@
+
 #! /usr/bin/bash
 
 
@@ -100,6 +101,7 @@ function stage1 () {
 	#INSTALL NVIDIA DRIVERS
 	echo "[Step 8] ...... Installing NVIDIA drivers"
 	sudo yum -y install kernel-devel dkms
+	sudo sed -i 's#GRUB_CMDLINE_LINUX="crashkernel=auto rhgb quiet"#GRUB_CMDLINE_LINUX="crashkernel=auto rhgb quiet rd.driver.blacklist=nouveau nouveau.modeset=0"#g' /etc/default/grub
 	sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 	sudo touch /etc/modprobe.d/blacklist.conf
 	sudo chmod 777 /etc/modprobe.d/blacklist.conf
@@ -205,7 +207,6 @@ function stage3 () {
 	tar -zxvf Nuke13.0v4-linux-x86_64.tgz
 	mkdir ./katana
 	tar -C ./katana -zxvf Katana4.0v5-linux-x86-release-64.tgz
-	tar -zxvf Nuke13.0v4-linux-x86_64.tgz
 
 	chmod +x ./Mari4.7v4-linux-x86-release-64.run
 	chmod +x ./Modo15.1v1_Linux.run

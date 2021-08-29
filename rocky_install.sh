@@ -1,4 +1,3 @@
-
 #! /usr/bin/bash
 
 
@@ -39,6 +38,7 @@ function stage1 () {
 	#sudo yum -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
+	sudo yum -y install wine
 	
 	sudo mkdir -p /mnt/mhamid/Main
 	sudo chmod -R 777 /mnt/mhamid
@@ -230,7 +230,17 @@ function stage3 () {
 	sudo yum -y install ./Substance_Painter-7.1.1-954-linux-x64-standard.rpm
 	sudo cp ./Substance_Patches/Substance\ Painter /opt/Allegorithmic/Substance_Painter/Substance\ Painter
 	sudo cp ./Substance_Patches/Substance\ Designer /opt/Allegorithmic/Substance_Designer/Substance\ Designer
-	
+
+	#HOUDINI
+	tar -zxvf houdini-18.0.499-linux_x86_64_gcc6.3.tar.gz
+	cd houdini-18.0.499-linux_x86_64_gcc6.3
+	sudo ./houdini.install
+	cd /opt/hfs18.0.499
+	source houdini_setup
+	sudo systemctl daemon-reload
+	sudo /etc/init.d/sesinetd stop
+	sudo cp /tmp/bootstrap_tmp/data/HoudiniCrack/sesinetd /usr/lib/sesi/sesinetd
+	sudo /etc/init.d/sesinetd start
 
 	#RV SOFTWARE
 	echo "[Step 15] ...... Installing RV Player"
@@ -309,6 +319,7 @@ function stage3 () {
 	echo "\n"
 	echo "\n Please manually do the following tasks:"
 	echo "\n	1) Generate license.gto file from windows and place it /opt/RV-*/etc/"
+	echo "\n	2) Run Houdini Keygen with Wine and install keys in hkey"
 
 }
 

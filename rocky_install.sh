@@ -264,23 +264,18 @@ function stage3 () {
 	sudo cp /tmp/bootstrap_tmp/data/HoudiniCrack/sesinetd /usr/lib/sesi/sesinetd
 	sudo /etc/init.d/sesinetd start
 
+	#DAVINCI RESOLVE
+	cd /tmp/bootstrap_tmp/data
+	chmod +x ./DaVinci_Resolve_Studio_17.2.2_Linux.run
+	sudo ./DaVinci_Resolve_Studio_17.2.2_Linux.run -i
+	sudo cp ./ResolveCrack/resolve /opt/DaVinci-Resolve-17.2.2/bin/resolve
+
 	#RV SOFTWARE
 	echo "[Step 15] ...... Installing RV Player"
 	cd /tmp/bootstrap_tmp
 	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
 	sudo tar -C /opt -zxvf Linux-release.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-2021.1.0 /opt/RV-2021.1.0
-
-	#TLM SERVER
-	#echo "[Step 16] ...... Installing TLM License Server"
-	#cd /tmp/bootstrap_tmp/data
-	#sudo cp -r ./TLM /opt/
-	#sudo chmod -R 777 /opt/TLM/
-	#cd /opt/TLM/scripts
-	#sudo ./install_tlmserver
-	#sudo systemctl daemon-reload
-	#sudo systemctl restart tlmd
-	#sudo systemctl enable tlmd
 	
 	#MAYA
 	echo "[Step 16] ...... Installing MAYA"

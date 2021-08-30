@@ -29,16 +29,16 @@ function stage1 () {
 	sudo yum -y install epel-release
 	sudo yum -y install yum-utils
 	sudo yum-config-manager --enable powertools
+	sudo yum -y install https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
 	sudo yum -y update
 	
 	sudo yum -y groupinstall "Development Tools"
 
 	sudo yum -y install gnome-tweaks dconf-editor
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel tcsh libgcrypt-devel libXScrnSaver
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc
 	#sudo yum -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
-	sudo yum -y install wine
 	
 	sudo mkdir -p /mnt/mhamid/Main
 	sudo chmod -R 777 /mnt/mhamid
@@ -132,7 +132,6 @@ function stage2 () {
 	echo "Restart your machine before continuing. YOU CAN USE GUI MODE FROM HERE"
 }
 
-
 function stage3 () {
 	echo "LINUX BOOSTRAP - RESUMING - STAGE [3] ......"
 	
@@ -146,9 +145,23 @@ function stage3 () {
 	source ~/.bashrc
 	conda config --add channels conda-forge
 	conda update -n base -c defaults conda -y
+
 	conda create --name cometpy37 python=3.7 -y
+	conda create --name cometpy37libs python=3.7 -y --no-default-packages
+	conda create --name cometpy27libs python=2.7 -y --no-default-packages
+
+	conda activate cometpy37libs
+	conda install -y qtpy pillow jinja2 pyopengl pillow requests pyyaml python-dateutil
+	pip install timeago
+
+	conda activate cometpy27libs
+	conda install -y qtpy pillow jinja2 pyopengl pillow requests pyyaml python-dateutil
+	pip install timeago
+
 	conda activate cometpy37
 	conda install -y pyside2 qtpy jinja2 pyopengl pillow requests pyyaml python-dateutil cmake git
+	conda install -y -c bioconda perl-local-lib
+	pip install timeago
 	
 	#RLM CONFIGURE
 	echo "[Step 10] ...... Installing RLM"
@@ -186,6 +199,15 @@ function stage3 () {
 	tar -C /builds -zxvf Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
 	mv /builds/Bokeh-v1.4.8_Nuke13.0-linux /builds/pgBokeh-v1.4.8
 
+#	cd /tmp/bootstrap_tmp
+#	git clone -b 2.94.0 https://github.com/nerdvegas/rez.git
+#	python ./rez/install.py -v /builds/rez
+#	rez-bind platform
+#	rez-bind arch
+#	rez-bind os
+#	rez-bind python
+	
+
 	#SNAP APPS
 	echo "[Step 13] ...... Installing Snap"
 	sudo yum -y install snapd
@@ -194,7 +216,7 @@ function stage3 () {
 	sudo snap install snap-store
 	sudo snap install snap-store
 	sudo snap install code --classic
-	sudo snap install discord audacity vlc postman inkscape
+	sudo snap install discord audacity postman inkscape
 
 	#FOUNDRY PRODUCTS
 	echo "[Step 14] ...... Installing Foundry Products"

@@ -35,7 +35,7 @@ function stage1 () {
 	sudo yum -y groupinstall "Development Tools"
 
 	sudo yum -y install gnome-tweaks dconf-editor
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu
 	#sudo yum -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
@@ -151,15 +151,15 @@ function stage3 () {
 	conda create --name cometpy27libs python=2.7 -y --no-default-packages
 
 	conda activate cometpy37libs
-	conda install -y qtpy pillow jinja2 pyopengl pillow requests pyyaml python-dateutil
+	conda install -y qtpy pillow jinja2 pyopengl pillow requests pyyaml python-dateutil setproctitle
 	pip install timeago
 
 	conda activate cometpy27libs
-	conda install -y qtpy pillow jinja2 pyopengl pillow requests pyyaml python-dateutil
+	conda install -y qtpy pillow jinja2 pyopengl pillow requests pyyaml python-dateutil setproctitle
 	pip install timeago
 
 	conda activate cometpy37
-	conda install -y pyside2 qtpy jinja2 pyopengl pillow requests pyyaml python-dateutil cmake git
+	conda install -y pyside2 qtpy jinja2 pyopengl pillow requests pyyaml python-dateutil cmake git setproctitle
 	conda install -y -c bioconda perl-local-lib
 	pip install timeago
 	
@@ -176,9 +176,9 @@ function stage3 () {
 	#INSTALL PYCHARM
 	echo "[Step 11] ...... Installing PyCharm"
 	cd /tmp/bootstrap_tmp/
-	wget https://download-cdn.jetbrains.com/python/pycharm-community-2021.2.tar.gz
-	sudo tar -C /opt -zxvf pycharm-community-2021.2.tar.gz
-	sudo mv /opt/pycharm-community-2021.2 /opt/PyCharm-Community-2021.2
+	wget https://download-cdn.jetbrains.com/python/pycharm-community-2021.1.3.tar.gz
+	sudo tar -C /opt -zxvf pycharm-community-2021.1.3.tar.gz
+	sudo mv /opt/pycharm-community-2021.1.3 /opt/PyCharm-Community-2021.1.3
 
 	#INSTALL BUILDS
 	echo "[Step 12] ...... Installing builds"
@@ -193,6 +193,7 @@ function stage3 () {
 	cd /tmp/bootstrap_tmp
 	wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_DEVKIT_Linux.tgz
 	mkdir -p /builds/MayaDevkit/2022
+	tar -zxvf Autodesk_Maya_2022_DEVKIT_Linux.tgz
 	mv devkitBase /builds/MayaDevkit/2022
 	
 	wget https://peregrinelabs-deploy.s3.amazonaws.com/Bokeh/1.4.8/Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
@@ -216,7 +217,8 @@ function stage3 () {
 	sudo snap install snap-store
 	sudo snap install snap-store
 	sudo snap install code --classic
-	sudo snap install discord audacity postman inkscape
+	sudo snap install slack --classic
+	sudo snap install discord audacity postman inkscape obs-studio
 
 	#FOUNDRY PRODUCTS
 	echo "[Step 14] ...... Installing Foundry Products"

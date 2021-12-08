@@ -34,8 +34,8 @@ function stage1 () {
 	
 	sudo yum -y groupinstall "Development Tools"
 
-	sudo yum -y install gnome-tweaks dconf-editor
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu
+	sudo yum -y install gnome-tweaks dconf-editor obs-studio
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen OpenEXR-devel OpenImageIO-devel OpenColorIO-devel hdf5-devel gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar
 	#sudo yum -y install gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
@@ -159,7 +159,7 @@ function stage3 () {
 	pip install timeago
 
 	conda activate cometpy37
-	conda install -y pyside2 qtpy jinja2 pyopengl pillow requests pyyaml python-dateutil cmake git setproctitle
+	conda install -y pyside2 qtpy jinja2 pyopengl pillow requests pyyaml python-dateutil cmake git setproctitle libcurl
 	conda install -y -c bioconda perl-local-lib
 	pip install timeago
 	
@@ -218,7 +218,7 @@ function stage3 () {
 	sudo snap install snap-store
 	sudo snap install code --classic
 	sudo snap install slack --classic
-	sudo snap install discord audacity postman inkscape obs-studio
+	sudo snap install discord audacity postman inkscape
 
 	#FOUNDRY PRODUCTS
 	echo "[Step 14] ...... Installing Foundry Products"
@@ -293,7 +293,7 @@ function stage3 () {
 	echo "[Step 17] ...... Installing USD"
 	mkdir ~/workspace
 	cd ~/workspace
-	git clone -b v21.08 https://github.com/PixarAnimationStudios/USD.git
+	git clone -b v21.11 https://github.com/PixarAnimationStudios/USD.git
 	sudo mkdir /opt/USD
 	sudo chmod -R 777 /opt/USD
 	conda activate cometpy37
@@ -304,22 +304,22 @@ function stage3 () {
 	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 	
 	cd ~/workspace
-	git clone -b v0.12.0 https://github.com/Autodesk/maya-usd.git
+	git clone -b v0.14.0 https://github.com/Autodesk/maya-usd.git
 	cd maya-usd
 	mkdir workspace
 	python build.py --build-args=-DBUILD_WITH_PYTHON_3=ON,-DBUILD_AL_PLUGIN=OFF,-DBUILD_STRICT_MODE=OFF --maya-location /usr/autodesk/maya2022 --pxrusd-location /opt/USD --devkit-location /builds/MayaDevkit/2022/devkitBase --qt-location /home/mhamid/anaconda/envs/cometpy37/lib workspace/
 	sudo mkdir -p /usr/autodesk/mayausd/2022/
-	sudo cp -r workspace/install/RelWithDebInfo/ /usr/autodesk/mayausd/2022/0.12.0
-	sudo mv /usr/autodesk/mayausd/2022/0.12.0/plugin/pxr/lib/python/pxr/UsdMaya /opt/USD/lib/python/pxr/
+	sudo cp -r workspace/install/RelWithDebInfo/ /usr/autodesk/mayausd/2022/0.14.0
+	sudo mv /usr/autodesk/mayausd/2022/0.14.0/plugin/pxr/lib/python/pxr/UsdMaya /opt/USD/lib/python/pxr/
 	sudo chown mhamid:mhamid /opt/USD/lib/python/pxr/UsdMaya/
-	sudo rm -rf /usr/autodesk/mayausd/2022/0.12.0/plugin/pxr/lib/python/pxr
+	sudo rm -rf /usr/autodesk/mayausd/2022/0.14.0/plugin/pxr/lib/python/pxr
 	sudo mkdir -p /usr/autodesk/modules/maya/2022/
-	sudo ln -s /usr/autodesk/mayausd/2022/0.12.0/pxrUSD.mod /usr/autodesk/modules/maya/2022/
-	sudo ln -s /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod /usr/autodesk/modules/maya/2022/
-	sudo chmod 777 /usr/autodesk/mayausd/2022/0.12.0/pxrUSD.mod
-	sudo chmod 777 /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod
-	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.12.0#g' /usr/autodesk/mayausd/2022/0.12.0/mayaUSD.mod
-	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.12.0#g' /usr/autodesk/mayausd/2022/0.12.0/pxrUSD.mod
+	sudo ln -s /usr/autodesk/mayausd/2022/0.14.0/pxrUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo ln -s /usr/autodesk/mayausd/2022/0.14.0/mayaUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.14.0/pxrUSD.mod
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.14.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.14.0#g' /usr/autodesk/mayausd/2022/0.14.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.14.0#g' /usr/autodesk/mayausd/2022/0.14.0/pxrUSD.mod
 	
 	#COMETPIPELINE
 	echo "[Step 18] ...... Pulling CometPipeline"

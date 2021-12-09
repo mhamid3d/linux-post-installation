@@ -251,8 +251,8 @@ function stage3 () {
 	#SUBSTANCE PRODUCTS
 	cd /tmp/bootstrap_tmp/data
 	sudo yum -y install ./Substance_Designer-11.1.2-4593-linux-x64-standard.rpm
-	sudo yum -y install ./Substance_Painter-7.1.1-954-linux-x64-standard.rpm
-	sudo cp ./Substance_Patches/Substance\ Painter /opt/Allegorithmic/Substance_Painter/Substance\ Painter
+	sudo yum -y install ./Adobe_Substance_3D_Painter-7.3.0-1272-linux-x64-standard.rpm
+	sudo cp ./Substance_Patches/Adobe\ Substance\ 3D\ Painter /opt/Adobe/Adobe_Substance_3D_Painter/Adobe\ Substance\ 3D\ Painter
 	sudo cp ./Substance_Patches/Substance\ Designer /opt/Allegorithmic/Substance_Designer/Substance\ Designer
 
 	#HOUDINI

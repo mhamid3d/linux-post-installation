@@ -225,25 +225,25 @@ function stage3 () {
 	cd /tmp/bootstrap_tmp
 	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.0v4/Nuke13.0v4-linux-x86_64.tgz
 	wget https://thefoundry.s3.amazonaws.com/products/modo/15.1v1/Modo15.1v1_Linux.run
-	wget https://thefoundry.s3.amazonaws.com/products/mari/releases/4.7v4/Mari4.7v4-linux-x86-release-64.run
+	wget https://s3.amazonaws.com/thefoundry/products/mari/releases/5.0v1/Mari5.0v1-linux-x86-release-64.run
 	wget https://thefoundry.s3.amazonaws.com/products/katana/releases/4.0v5/Katana4.0v5-linux-x86-release-64.tgz
 
 	tar -zxvf Nuke13.0v4-linux-x86_64.tgz
 	mkdir ./katana
 	tar -C ./katana -zxvf Katana4.0v5-linux-x86-release-64.tgz
 
-	chmod +x ./Mari4.7v4-linux-x86-release-64.run
+	chmod +x ./Mari5.0v1-linux-x86-release-64.run
 	chmod +x ./Modo15.1v1_Linux.run
 	chmod +x ./katana/install.sh
 	chmod +x ./Nuke13.0v4-linux-x86_64.run
 
-	sudo mkdir /opt/Mari4.7v4
+	sudo mkdir /opt/Mari5.0v1
 	sudo mkdir /opt/Modo15.1v1
 	sudo mkdir /opt/Katana4.0v5
 	sudo mkdir /opt/Nuke13.0v4
 
 	sudo ./Nuke13.0v4-linux-x86_64.run --prefix=/opt --accept-foundry-eula
-	sudo ./Mari4.7v4-linux-x86-release-64.run --prefix=/opt/Mari4.7v4 --accept-eula
+	sudo ./Mari5.0v1-linux-x86-release-64.run --prefix=/opt/Mari5.0v1 --accept-eula
 	sudo ./Modo15.1v1_Linux.run --accept-eula --target /opt/Modo15.1v1
 	cd katana
 	sudo ./install.sh --no-3delight --accept-eula --katana-path /opt/Katana4.0v5

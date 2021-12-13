@@ -159,9 +159,10 @@ function stage3 () {
 	pip install timeago
 
 	conda activate cometpy37
-	conda install -y pyside2 qtpy jinja2 pyopengl pillow requests pyyaml python-dateutil cmake git setproctitle libcurl
+	conda install -y pyside2 qtpy jinja2 pyopengl pillow requests pyyaml python-dateutil cmake git setproctitle libcurl syncthing psutil
 	conda install -y -c bioconda perl-local-lib
 	pip install timeago
+	ln -s ~/anaconda/envs/cometpy37/syncthing ~/anaconda/envs/cometpy37/bin/syncthing
 	
 	#RLM CONFIGURE
 	echo "[Step 10] ...... Installing RLM"

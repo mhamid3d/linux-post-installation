@@ -25,7 +25,7 @@ function run_installer() {
 	echo "Mounting Main disk..."
 	sudo mkdir -p /mnt/mhamid/Main
 	sudo chmod -R 777 /mnt/mhamid
-	sudo echo "/dev/sda2	/mnt/mhamid/Main	ntfs-3g defaults	0 0" >> /etc/fstab
+	echo '/dev/sda2	/mnt/mhamid/Main	ntfs-3g defaults	0 0' | sudo tee -a /etc/fstab
 
 	echo "Configuring gsettings..."
 	gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'

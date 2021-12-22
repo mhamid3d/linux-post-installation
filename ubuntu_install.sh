@@ -20,7 +20,7 @@ function run_installer() {
 
 	echo "Updating & Installing required packages..."
 	sudo apt -y update && sudo apt -y upgrade
-	sudo apt -y install aptitude dconf-editor gnome-tweaks ntfs-3g obs-studio qbittorrent libglfw3-dev libglx-dev vlc unar nvidia-driver-470 vim cmake git alien mesa-common-dev
+	sudo apt -y install aptitude dconf-editor gnome-tweaks ntfs-3g obs-studio qbittorrent libglfw3-dev libglx-dev vlc unar nvidia-driver-470 vim cmake git alien mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
 
 	echo "Mounting Main disk..."
 	sudo mkdir -p /mnt/mhamid/Main

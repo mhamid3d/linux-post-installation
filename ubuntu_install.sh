@@ -4,7 +4,7 @@
 function confirm_data() {
 	echo ""
 	echo ""
-	echo "Please download the data.tar file and place it in the /tmp/bootstrap_tmp directory"
+	echo "Please download the data.tar file and place it in the /home/mhamid/bootstrap directory"
 	echo ""
 	echo ""
 	read -p "Please enter 'yes' when complete: "
@@ -34,9 +34,9 @@ function run_installer() {
 
 
 	echo "Installing Google Chrome..."
-	cd /tmp
-	mkdir bootstrap_tmp
-	cd bootstrap_tmp
+	cd ~
+	mkdir bootstrap
+	cd bootstrap
 	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 	sudo apt -y install ./google-chrome-stable_current_amd64.deb
 	rm ./google-chrome-stable_current_amd64.deb
@@ -44,8 +44,8 @@ function run_installer() {
 
 	until confirm_data; do : ; done
 
-	tar -C /tmp/bootstrap_tmp -xvf /tmp/bootstrap_tmp/data.tar
-	rm /tmp/bootstrap_tmp/data.tar
+	tar -C /home/mhamid/bootstrap -xvf /home/mhamid/bootstrap/data.tar
+	rm /home/mhamid/bootstrap/data.tar
 
 	echo "Configuring favorite apps..."
 	gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
@@ -71,7 +71,7 @@ function run_installer() {
 
 
 	echo "Installing Anaconda..."
-	cd /tmp/bootstrap_tmp/
+	cd /home/mhamid/bootstrap/
 	wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
 	chmod +x ./Anaconda3-2021.11-Linux-x86_64.sh
 	./Anaconda3-2021.11-Linux-x86_64.sh
@@ -100,7 +100,7 @@ function run_installer() {
 
 
 	echo "Installing RLM..."
-	cd /tmp/bootstrap_tmp/data/RLM_Linux-64
+	cd /home/mhamid/bootstrap/data/RLM_Linux-64
 	chmod +x ./rlm_install.sh
 	sudo ./rlm_install.sh
 	source /opt/rlm/rlmenvset.sh
@@ -110,7 +110,7 @@ function run_installer() {
 
 
 	echo "Installing PyCharm..."
-	cd /tmp/bootstrap_tmp/
+	cd /home/mhamid/bootstrap/
 	wget https://download-cdn.jetbrains.com/python/pycharm-community-2021.1.3.tar.gz
 	sudo tar -C /opt -zxvf pycharm-community-2021.1.3.tar.gz
 	rm ./pycharm-community-2021.1.3.tar.gz
@@ -124,9 +124,9 @@ function run_installer() {
 	git clone -b v1.2 https://github.com/colour-science/OpenColorIO-Configs.git
 	git clone -b 1.4.0 https://github.com/Psyop/Cryptomatte.git
 
-	cp -r /tmp/bootstrap_tmp/data/ktoa-3.2.2.1-kat4.0-linux /builds/
+	cp -r /home/mhamid/bootstrap/data/ktoa-3.2.2.1-kat4.0-linux /builds/
 
-	cd /tmp/bootstrap_tmp
+	cd /home/mhamid/bootstrap
 	wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_DEVKIT_Linux.tgz
 	mkdir -p /builds/MayaDevkit/2022
 	tar -zxvf Autodesk_Maya_2022_DEVKIT_Linux.tgz
@@ -145,7 +145,7 @@ function run_installer() {
 
 
 	echo "Installing Foundry Products..."
-	cd /tmp/bootstrap_tmp
+	cd /home/mhamid/bootstrap
 	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.1v1/Nuke13.1v1-linux-x86_64.tgz
 	wget https://thefoundry.s3.amazonaws.com/products/modo/15.1v1/Modo15.1v1_Linux.run
 	wget https://s3.amazonaws.com/thefoundry/products/mari/releases/5.0v1/Mari5.0v1-linux-x86-release-64.run
@@ -181,7 +181,7 @@ function run_installer() {
 
 
 	echo "Installing Substance products..."
-	cd /tmp/bootstrap_tmp
+	cd /home/mhamid/bootstrap
 	wget https://download.substance3d.com/adobe-substance-3d-designer/11.x/Adobe_Substance_3D_Designer-11.2.1-4934-linux-x64-standard.rpm
 	wget https://download.substance3d.com/adobe-substance-3d-painter/7.x/Adobe_Substance_3D_Painter-7.2.3-1197-linux-x64-standard.rpm
 
@@ -200,7 +200,7 @@ function run_installer() {
 
 
 	echo "Installing Houdini 19..."
-	cd /tmp/bootstrap_tmp
+	cd /home/mhamid/bootstrap
 	tar -zxvf data/houdini-19.0.383-linux_x86_64_gcc9.3.tar.gz
 	cd houdini-19.0.383-linux_x86_64_gcc9.3/
 	sudo ./houdini.install
@@ -210,24 +210,24 @@ function run_installer() {
 	source houdini_setup
 	sudo systemctl daemon-reload
 	sudo systemctl stop sesinetd
-	sudo cp /tmp/bootstrap_tmp/data/Houdini_Patches/sesinetd /usr/lib/sesi/sesinetd
+	sudo cp /home/mhamid/bootstrap/data/Houdini_Patches/sesinetd /usr/lib/sesi/sesinetd
 	sudo systemctl start sesinetd
-	sudo chmod +x /tmp/bootstrap_tmp/data/Houdini_Patches/Houdini-Tools
+	sudo chmod +x /home/mhamid/bootstrap/data/Houdini_Patches/Houdini-Tools
 
 	sesi_id=`/usr/lib/sesi/sesictrl print-server | grep SERVER | tr '\n' ' ' | awk '{print $NF}' | xargs`
 	sesi_host=`/usr/lib/sesi/sesictrl print-server | grep SERVER | tr '\n' ' ' | awk '{print $(NF-1)}' | xargs`
-	printf "$sesi_host\n$sesi_id" | /tmp/bootstrap_tmp/data/Houdini_Patches/Houdini-Tools | grep -E 'SERVER|LICENSE' | sed 's/Enter server name:Enter server id://g' | tee /tmp/bootstrap_tmp/hfs_keys.txt
+	printf "$sesi_host\n$sesi_id" | /home/mhamid/bootstrap/data/Houdini_Patches/Houdini-Tools | grep -E 'SERVER|LICENSE' | sed 's/Enter server name:Enter server id://g' | tee /home/mhamid/bootstrap/hfs_keys.txt
 	while IFS="" read hfs_key; do
 		/usr/lib/sesi/sesictrl install "$hfs_key"
-	done </tmp/bootstrap_tmp/hfs_keys.txt
+	done </home/mhamid/bootstrap/hfs_keys.txt
 
 	unset sesi_id
 	unset sesi_host
-	rm /tmp/bootstrap_tmp/hfs_keys.txt
+	rm /home/mhamid/bootstrap/hfs_keys.txt
 
 
 	echo "Installing Davinci Resolve..."
-	cd /tmp/bootstrap_tmp/data
+	cd /home/mhamid/bootstrap/data
 	chmod +x ./DaVinci_Resolve_Studio_17.2.2_Linux.run
 	sudo ./DaVinci_Resolve_Studio_17.2.2_Linux.run -i
 	sudo cp ./ResolveCrack/resolve /opt/resolve/bin/resolve
@@ -235,7 +235,7 @@ function run_installer() {
 
 
 	echo "Installing RV Player..."
-	cd /tmp/bootstrap_tmp
+	cd /home/mhamid/bootstrap
 	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
 	sudo tar -C /opt -zxvf Linux-release.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-* /opt/RV
@@ -243,13 +243,13 @@ function run_installer() {
 
 
 	echo "Installing Maya..."
-	cd /tmp/bootstrap_tmp
-	cp /tmp/bootstrap_tmp/data/Maya2022/Maya2022_64-2022.0-217.x86_64.rpm /tmp/bootstrap_tmp/
+	cd /home/mhamid/bootstrap
+	cp /home/mhamid/bootstrap/data/Maya2022/Maya2022_64-2022.0-217.x86_64.rpm /home/mhamid/bootstrap/
 	sudo alien --scripts Maya2022_64-2022.0-217.x86_64.rpm
 	rm Maya2022_64-2022.0-217.x86_64.rpm
 	sudo apt -y install ./maya2022*.deb
 	sudo rm maya2022*.deb
-	sudo cp /tmp/bootstrap_tmp/data/Maya2022/maya.bin /usr/autodesk/maya2022/bin/maya.bin
+	sudo cp /home/mhamid/bootstrap/data/Maya2022/maya.bin /usr/autodesk/maya2022/bin/maya.bin
 	sudo mv /usr/autodesk/maya2022/bin/ADPClientService /usr/autodesk/maya2022/bin/ADPClientService_NOTHANKYOU
 	mkdir -p ~/.autodesk/UI/Autodesk/ADPSDK/JSON/
 	sudo chmod a-rwx /home/mhamid/.autodesk/UI/Autodesk/ADPSDK/JSON/
@@ -308,7 +308,7 @@ function run_installer() {
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
 
 
-	cp /tmp/bootstrap_tmp/data/.bashrc ~/.bashrc
+	cp /home/mhamid/bootstrap/data/.bashrc ~/.bashrc
 
 	echo "\n BOOTSTRAP DONE!!!"
 	echo "\n"

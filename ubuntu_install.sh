@@ -279,6 +279,8 @@ function run_installer() {
 	cd ~/workspace/USD
 	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 
+	
+	echo "Installing Maya USD..."
 	cd ~/workspace
 	git clone -b v0.15.0 https://github.com/Autodesk/maya-usd.git
 	cd maya-usd
@@ -308,6 +310,7 @@ function run_installer() {
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
 
 
+	cp /home/mhamid/bootstrap/data/.bash_default ~/.bash_default
 	cp /home/mhamid/bootstrap/data/.bashrc ~/.bashrc
 
 	echo "\n BOOTSTRAP DONE!!!"

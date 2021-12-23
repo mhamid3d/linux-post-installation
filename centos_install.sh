@@ -50,7 +50,7 @@ function stage1 () {
 	
 	sudo yum -y groupinstall "Development Tools"
 
-	sudo yum -y install dconf-editor obs-studio
+	sudo yum -y install dconf-editor obs-studio gnome-tweak-tool
 	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
@@ -268,7 +268,7 @@ function stage3 () {
 	rm ./Nuke13.1v1-linux-x86_64.run
 
   echo -e "${GREEN}Installing Substance products..."
-	cd /home/mhamid/bootstrap/data
+	cd /home/mhamid/bootstrap
   wget https://download.substance3d.com/adobe-substance-3d-designer/11.x/Adobe_Substance_3D_Designer-11.2.1-4934-linux-x64-standard.rpm
 	wget https://download.substance3d.com/adobe-substance-3d-painter/7.x/Adobe_Substance_3D_Painter-7.2.3-1197-linux-x64-standard.rpm
 	sudo yum -y install ./Adobe_Substance_3D*.rpm
@@ -284,23 +284,12 @@ function stage3 () {
 	sudo ./houdini.install
 	cd ..
 	rm -rf ./houdini-19.0.383-linux_x86_64_gcc9.3
-	cd /opt/hfs19.0.383
 	sudo systemctl daemon-reload
-	sudo systemctl stop sesinetd
+	sudo /etc/init.d/sesinetd stop
 	sudo cp /home/mhamid/bootstrap/data/Houdini_Patches/sesinetd /usr/lib/sesi/sesinetd
-	sudo systemctl start sesinetd
+	sudo cp /home/mhamid/bootstrap/data/Houdini_Patches/sesinetd /usr/lib/sesi/sesinetd
+	sudo /etc/init.d/sesinetd start
 	sudo chmod +x /home/mhamid/bootstrap/data/Houdini_Patches/Houdini-Tools
-
-	sesi_id=`/usr/lib/sesi/sesictrl print-server | grep SERVER | tr '\n' ' ' | awk '{print $NF}' | xargs`
-	sesi_host=`/usr/lib/sesi/sesictrl print-server | grep SERVER | tr '\n' ' ' | awk '{print $(NF-1)}' | xargs`
-	printf "$sesi_host\n$sesi_id" | /home/mhamid/bootstrap/data/Houdini_Patches/Houdini-Tools | grep -E 'SERVER|LICENSE' | sed 's/Enter server name:Enter server id://g' | tee /home/mhamid/bootstrap/hfs_keys.txt
-	while IFS="" read hfs_key; do
-		/usr/lib/sesi/sesictrl install "$hfs_key"
-	done </home/mhamid/bootstrap/hfs_keys.txt
-
-	unset sesi_id
-	unset sesi_host
-	rm /home/mhamid/bootstrap/hfs_keys.txt
 
 	echo -e "${GREEN}Installing Davinci Resolve..."
 	cd /home/mhamid/bootstrap/data
@@ -367,7 +356,22 @@ function stage3 () {
 	mkdir -p ~/anaconda/envs/cometpy37/etc/conda/deactivate.d
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_activate.sh ~/anaconda/envs/cometpy37/etc/conda/activate.d/site_env_activate.sh
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
-	
+
+  echo -e "${GREEN}Patching Houdini..."
+  cd /opt/hfs19.0.383
+  source ./houdini_setup
+	sesi_id=`/usr/lib/sesi/sesictrl print-server | grep SERVER | tr '\n' ' ' | awk '{print $NF}' | xargs`
+	sesi_host=`/usr/lib/sesi/sesictrl print-server | grep SERVER | tr '\n' ' ' | awk '{print $(NF-1)}' | xargs`
+	printf "$sesi_host\n$sesi_id" | /home/mhamid/bootstrap/data/Houdini_Patches/Houdini-Tools | grep -E 'SERVER|LICENSE' | sed 's/Enter server name:Enter server id://g' | tee /home/mhamid/bootstrap/hfs_keys.txt
+	while IFS="" read hfs_key; do
+		/usr/lib/sesi/sesictrl install "$hfs_key"
+	done </home/mhamid/bootstrap/hfs_keys.txt
+
+	unset sesi_id
+	unset sesi_host
+	rm /home/mhamid/bootstrap/hfs_keys.txt
+
+  echo -e "${GREEN}Copying bashrc file..."
 	cp /home/mhamid/bootstrap/data/.bashrc ~/.bashrc
 
 	echo -e "\n INSTALL DONE!!!"

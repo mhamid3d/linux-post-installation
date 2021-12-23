@@ -22,7 +22,8 @@ function run_installer() {
 
 	echo -e "${GREEN}Updating & Installing required packages..."
 	sudo apt -y update && sudo apt -y upgrade
-	sudo apt -y install aptitude dconf-editor gnome-tweaks ntfs-3g obs-studio qbittorrent libglfw3-dev libglx-dev vlc unar build-essential nvidia-driver-470 cmake git alien mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
+	sudo apt -y install aptitude dconf-editor gnome-tweaks ntfs-3g obs-studio qbittorrent libglfw3-dev libglx-dev vlc unar build-essential nvidia-driver-470 cmake git alien mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev zlib1g-dev libjpeg62-dev libfam0 libcurl4 libpcre16-3 libjpeg62 libxm4 xfonts-100dpi xfonts-75dpi
+	sudo apt -y install --reinstall libxcb-xinerama0
 
 	echo -e "${GREEN}Mounting Main disk..."
 	sudo mkdir -p /mnt/mhamid/Main
@@ -143,6 +144,15 @@ function run_installer() {
 	tar -C /builds -zxvf Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
 	rm ./Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
 	mv /builds/Bokeh-v1.4.8_Nuke13.0-linux /builds/pgBokeh-v1.4.8
+	
+	echo -e "${GREEN}Building libpng"
+	cd /tmp
+	wget https://sourceforge.net/projects/libpng/files/libpng15/older-releases/1.5.15/libpng-1.5.15.tar.gz
+	tar -zxvf ./libpng-1.5.15.tar.gz
+	cd libpng-1.5.15/
+	./configure --prefix /usr/local/libpng
+	make check
+	sudo make install
 
 	echo -e "${GREEN}Installing Snap apps..."
 	sudo snap install code --classic
@@ -270,6 +280,23 @@ function run_installer() {
 	sudo cp -a /usr/autodesk/maya2022/support/python/3.7.7/_ssl* ./
 
 	sudo /usr/autodesk/maya2022/bin/mayapy -m pip install pymel
+	
+	sudo ln -s /usr/local/libpng/lib/libpng15.so.15 /usr/autodesk/maya2022/lib/	
+	sudo ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.1 /usr/autodesk/maya2022/lib/libssl.so.10
+	sudo ln -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 /usr/autodesk/maya2022/lib/libcrypto.so.10
+	sudo ln -s /usr/lib/x86_64-linux-gnu/libpcre16.so.3 /usr/autodesk/maya2022/lib/libpcre16.so.0
+	xset +fp /usr/share/fonts/X11/100dpi
+	xset +fp /usr/share/fonts/X11/75dpi
+	xset fp rehash
+	sudo mkdir /usr/tmp
+	sudo chmod 777 /usr/tmp
+	mkdir -p ~/maya/2022
+	echo "MAYA_DISABLE_ADP=1" >> ~/maya/2022/Maya.env
+	echo "LC_ALL=C" >> ~/maya/2022/Maya.env
+	
+	cd /tmp
+	wget https://launchpadlibrarian.net/475814296/libxp6_1.0.2-2ubuntu1~20.04_amd64.deb
+	sudo apt -y install ./libxp6_1.0.2-2ubuntu1~20.04_amd64.deb
 
 
 	echo -e "${GREEN}Installing Pixar USD..."

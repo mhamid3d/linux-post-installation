@@ -31,6 +31,7 @@ function run_installer() {
 	gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
 	gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
 	dconf write /org/gtk/settings/file-chooser/show-hidden true
+	gsettings set org.gnome.desktop.screensaver lock-enabled false
 
 
 	echo "Installing Google Chrome..."

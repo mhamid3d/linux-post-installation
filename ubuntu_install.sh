@@ -282,27 +282,27 @@ function run_installer() {
 	source /opt/rh/devtoolset-9/enable
 	conda activate cometpy37
 	cd ~/workspace/USD
-	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
+	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --use-cxx11-abi 0 --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 
 	
 	echo -e "${GREEN}Installing Maya USD..."
 	cd ~/workspace
-	git clone -b v0.14.0 https://github.com/Autodesk/maya-usd.git
+	git clone -b v0.15.0 https://github.com/Autodesk/maya-usd.git
 	cd maya-usd
 	mkdir workspace
-	python build.py --build-args=-DBUILD_WITH_PYTHON_3=ON,-DBUILD_AL_PLUGIN=OFF,-DBUILD_STRICT_MODE=OFF --maya-location /usr/autodesk/maya2022 --pxrusd-location /opt/USD --devkit-location /builds/MayaDevkit/2022/devkitBase --qt-location /home/mhamid/anaconda/envs/cometpy37/lib workspace/
+	python build.py --build-args=-DBUILD_WITH_PYTHON_3=ON,-DBUILD_AL_PLUGIN=OFF,-DBUILD_STRICT_MODE=OFF,-D_GLIBCXX_USE_CXX11_ABI=0 --maya-location /usr/autodesk/maya2022 --pxrusd-location /opt/USD --devkit-location /builds/MayaDevkit/2022/devkitBase --qt-location /home/mhamid/anaconda/envs/cometpy37/lib workspace/
 	sudo mkdir -p /usr/autodesk/mayausd/2022/
-	sudo cp -r workspace/install/RelWithDebInfo/ /usr/autodesk/mayausd/2022/0.14.0
-	sudo mv /usr/autodesk/mayausd/2022/0.14.0/plugin/pxr/lib/python/pxr/UsdMaya /opt/USD/lib/python/pxr/
+	sudo cp -r workspace/install/RelWithDebInfo/ /usr/autodesk/mayausd/2022/0.15.0
+	sudo mv /usr/autodesk/mayausd/2022/0.15.0/plugin/pxr/lib/python/pxr/UsdMaya /opt/USD/lib/python/pxr/
 	sudo chown mhamid:mhamid /opt/USD/lib/python/pxr/UsdMaya/
-	sudo rm -rf /usr/autodesk/mayausd/2022/0.14.0/plugin/pxr/lib/python/pxr
+	sudo rm -rf /usr/autodesk/mayausd/2022/0.15.0/plugin/pxr/lib/python/pxr
 	sudo mkdir -p /usr/autodesk/modules/maya/2022/
-	sudo ln -s /usr/autodesk/mayausd/2022/0.14.0/pxrUSD.mod /usr/autodesk/modules/maya/2022/
-	sudo ln -s /usr/autodesk/mayausd/2022/0.14.0/mayaUSD.mod /usr/autodesk/modules/maya/2022/
-	sudo chmod 777 /usr/autodesk/mayausd/2022/0.14.0/pxrUSD.mod
-	sudo chmod 777 /usr/autodesk/mayausd/2022/0.14.0/mayaUSD.mod
-	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.14.0#g' /usr/autodesk/mayausd/2022/0.14.0/mayaUSD.mod
-	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.14.0#g' /usr/autodesk/mayausd/2022/0.14.0/pxrUSD.mod
+	sudo ln -s /usr/autodesk/mayausd/2022/0.15.0/pxrUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo ln -s /usr/autodesk/mayausd/2022/0.15.0/mayaUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.15.0/pxrUSD.mod
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.15.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.15.0#g' /usr/autodesk/mayausd/2022/0.15.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.15.0#g' /usr/autodesk/mayausd/2022/0.15.0/pxrUSD.mod
 
 
 	echo -e "${GREEN}Pulling CometPipeline"

@@ -61,6 +61,8 @@ function run_installer() {
 	sudo cp /usr/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com/schemas/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/share/glib-2.0/schemas/
 	sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
 	gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 42
+	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 1
+	gsettings set org.gnome.shell.extensions.dash-to-panel trans-panel-opacity 0.6
 	gsettings set org.gnome.shell.extensions.system-monitor cpu-refresh-time 50
 	gsettings set org.gnome.shell.extensions.system-monitor memory-refresh-time 50
 	gsettings set org.gnome.shell.extensions.system-monitor net-refresh-time 50

@@ -213,7 +213,6 @@ function run_installer() {
 	cd ..
 	rm -rf ./houdini-19.0.383-linux_x86_64_gcc9.3
 	cd /opt/hfs19.0.383
-	source houdini_setup
 	sudo systemctl daemon-reload
 	sudo systemctl stop sesinetd
 	sudo cp /home/mhamid/bootstrap/data/Houdini_Patches/sesinetd /usr/lib/sesi/sesinetd
@@ -312,6 +311,8 @@ function run_installer() {
 	mkdir ~/_dev
 	cd ~/_dev
 	git clone https://github.com/CometPipeline/cometpipeline.git
+	mkdir -p ~/anaconda/envs/cometpy37/etc/conda/activate.d
+	mkdir -p ~/anaconda/envs/cometpy37/etc/conda/deactivate.d
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_activate.sh ~/anaconda/envs/cometpy37/etc/conda/activate.d/site_env_activate.sh
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
 
@@ -320,7 +321,7 @@ function run_installer() {
 	cp /home/mhamid/bootstrap/data/.bashrc ~/.bashrc
 
 	echo -e "\n ${GREEN}BOOTSTRAP DONE!!!"
-	echo "\n"
+	echo -e "\n"
 }
 
 

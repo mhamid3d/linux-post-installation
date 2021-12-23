@@ -6,7 +6,7 @@ RED='\033[1;31m'
 function confirm_data() {
 	echo ""
 	echo ""
-	echo -e "{RED}Please download the data.tar file and place it in the /home/mhamid/bootstrap directory"
+	echo -e "${RED}Please download the data.tar file and place it in the /home/mhamid/bootstrap directory"
 	echo ""
 	echo ""
 	read -p "Please enter 'yes' when complete: "
@@ -20,23 +20,23 @@ function confirm_data() {
 
 function run_installer() {
 
-	echo -e "{GREEN}Updating & Installing required packages..."
+	echo -e "${GREEN}Updating & Installing required packages..."
 	sudo apt -y update && sudo apt -y upgrade
 	sudo apt -y install aptitude dconf-editor gnome-tweaks ntfs-3g obs-studio qbittorrent libglfw3-dev libglx-dev vlc unar nvidia-driver-470 cmake git alien mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
 
-	echo -e "{GREEN}Mounting Main disk..."
+	echo -e "${GREEN}Mounting Main disk..."
 	sudo mkdir -p /mnt/mhamid/Main
 	sudo chmod -R 777 /mnt/mhamid
 	echo '/dev/sda2	/mnt/mhamid/Main	ntfs-3g defaults	0 0' | sudo tee -a /etc/fstab
 
-	echo -e "{GREEN}Configuring gsettings..."
+	echo -e "${GREEN}Configuring gsettings..."
 	gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
 	gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
 	dconf write /org/gtk/settings/file-chooser/show-hidden true
 	gsettings set org.gnome.desktop.screensaver lock-enabled false
 
 
-	echo -e "{GREEN}Installing Google Chrome..."
+	echo -e "${GREEN}Installing Google Chrome..."
 	cd ~
 	mkdir bootstrap
 	cd bootstrap
@@ -50,7 +50,7 @@ function run_installer() {
 	tar -C /home/mhamid/bootstrap -xvf /home/mhamid/bootstrap/data.tar
 	rm /home/mhamid/bootstrap/data.tar
 
-	echo -e "{GREEN}Configuring favorite apps..."
+	echo -e "${GREEN}Configuring favorite apps..."
 	gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
 
 
@@ -67,7 +67,7 @@ function run_installer() {
 	gsettings set org.gnome.shell.extensions.system-monitor memory-graph-width 85
 	gsettings set org.gnome.shell.extensions.system-monitor net-graph-width 85
 
-	echo -e "{GREEN}Configuring Wallpaper..."
+	echo -e "${GREEN}Configuring Wallpaper..."
 	cd ~/Pictures
 	wget https://w.wallhaven.cc/full/ox/wallhaven-oxoz6l.png
 	dconf write /org/gnome/desktop/background/picture-uri "'file:///home/mhamid/Pictures/wallhaven-oxoz6l.png'"
@@ -102,7 +102,7 @@ function run_installer() {
 	ln -s ~/anaconda/envs/cometpy37/syncthing ~/anaconda/envs/cometpy37/bin/syncthing
 
 
-	echo -e "{GREEN}Installing RLM..."
+	echo -e "${GREEN}Installing RLM..."
 	cd /home/mhamid/bootstrap/data/RLM_Linux-64
 	chmod +x ./rlm_install.sh
 	sudo ./rlm_install.sh
@@ -112,7 +112,7 @@ function run_installer() {
 	sudo systemctl enable rlmd
 
 
-	echo -e "{GREEN}Installing PyCharm..."
+	echo -e "${GREEN}Installing PyCharm..."
 	cd /home/mhamid/bootstrap/
 	wget https://download-cdn.jetbrains.com/python/pycharm-community-2021.1.3.tar.gz
 	sudo tar -C /opt -zxvf pycharm-community-2021.1.3.tar.gz
@@ -120,7 +120,7 @@ function run_installer() {
 	sudo mv /opt/pycharm-community-2021.1.3 /opt/PyCharm-Community-2021.1.3
 
 
-	echo -e "{GREEN}Installing builds..."
+	echo -e "${GREEN}Installing builds..."
 	sudo mkdir /builds
 	sudo chmod -R 777 /builds
 	cd /builds
@@ -141,13 +141,13 @@ function run_installer() {
 	rm ./Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
 	mv /builds/Bokeh-v1.4.8_Nuke13.0-linux /builds/pgBokeh-v1.4.8
 
-	echo -e "{GREEN}Installing Snap apps..."
+	echo -e "${GREEN}Installing Snap apps..."
 	sudo snap install code --classic
 	sudo snap install slack --classic
 	sudo snap install discord audacity postman inkscape
 
 
-	echo -e "{GREEN}Installing Foundry Products..."
+	echo -e "${GREEN}Installing Foundry Products..."
 	cd /home/mhamid/bootstrap
 	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.1v1/Nuke13.1v1-linux-x86_64.tgz
 	wget https://thefoundry.s3.amazonaws.com/products/modo/15.1v1/Modo15.1v1_Linux.run
@@ -183,7 +183,7 @@ function run_installer() {
 	rm ./Nuke13.1v1-linux-x86_64.run
 
 
-	echo -e "{GREEN}Installing Substance products..."
+	echo -e "${GREEN}Installing Substance products..."
 	cd /home/mhamid/bootstrap
 	wget https://download.substance3d.com/adobe-substance-3d-designer/11.x/Adobe_Substance_3D_Designer-11.2.1-4934-linux-x64-standard.rpm
 	wget https://download.substance3d.com/adobe-substance-3d-painter/7.x/Adobe_Substance_3D_Painter-7.2.3-1197-linux-x64-standard.rpm
@@ -202,7 +202,7 @@ function run_installer() {
 	sudo cp data/Substance_Patches/Adobe\ Substance\ 3D\ Painter /opt/Adobe/Adobe_Substance_3D_Painter/Adobe\ Substance\ 3D\ Painter
 
 
-	echo -e "{GREEN}Installing Houdini 19..."
+	echo -e "${GREEN}Installing Houdini 19..."
 	cd /home/mhamid/bootstrap
 	tar -zxvf data/houdini-19.0.383-linux_x86_64_gcc9.3.tar.gz
 	cd houdini-19.0.383-linux_x86_64_gcc9.3/
@@ -229,7 +229,7 @@ function run_installer() {
 	rm /home/mhamid/bootstrap/hfs_keys.txt
 
 
-	echo -e "{GREEN}Installing Davinci Resolve..."
+	echo -e "${GREEN}Installing Davinci Resolve..."
 	cd /home/mhamid/bootstrap/data
 	chmod +x ./DaVinci_Resolve_Studio_17.2.2_Linux.run
 	sudo ./DaVinci_Resolve_Studio_17.2.2_Linux.run -i
@@ -237,7 +237,7 @@ function run_installer() {
 	rm ~/Desktop/com.blackmagicdesign.resolve.desktop
 
 
-	echo -e "{GREEN}Installing RV Player..."
+	echo -e "${GREEN}Installing RV Player..."
 	cd /home/mhamid/bootstrap
 	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
 	sudo tar -C /opt -zxvf Linux-release.tar.gz
@@ -245,7 +245,7 @@ function run_installer() {
 	rm Linux-release.tar.gz
 
 
-	echo -e "{GREEN}Installing Maya..."
+	echo -e "${GREEN}Installing Maya..."
 	cd /home/mhamid/bootstrap
 	cp /home/mhamid/bootstrap/data/Maya2022/Maya2022_64-2022.0-217.x86_64.rpm /home/mhamid/bootstrap/
 	sudo alien --scripts Maya2022_64-2022.0-217.x86_64.rpm
@@ -270,7 +270,7 @@ function run_installer() {
 	sudo /usr/autodesk/maya2022/bin/mayapy -m pip install pymel
 
 
-	echo -e "{GREEN}Installing Pixar USD..."
+	echo -e "${GREEN}Installing Pixar USD..."
 	mkdir ~/workspace
 	cd ~/workspace
 	git clone -b v21.11 https://github.com/PixarAnimationStudios/USD.git
@@ -283,7 +283,7 @@ function run_installer() {
 	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 
 	
-	echo -e "{GREEN}Installing Maya USD..."
+	echo -e "${GREEN}Installing Maya USD..."
 	cd ~/workspace
 	git clone -b v0.14.0 https://github.com/Autodesk/maya-usd.git
 	cd maya-usd
@@ -303,7 +303,7 @@ function run_installer() {
 	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.14.0#g' /usr/autodesk/mayausd/2022/0.14.0/pxrUSD.mod
 
 
-	echo -e "{GREEN}Pulling CometPipeline"
+	echo -e "${GREEN}Pulling CometPipeline"
 	conda activate cometpy37
 	git config --global credential.helper store
 	mkdir ~/_dev
@@ -316,7 +316,7 @@ function run_installer() {
 	cp /home/mhamid/bootstrap/data/.bash_default ~/.bash_default
 	cp /home/mhamid/bootstrap/data/.bashrc ~/.bashrc
 
-	echo -e "\n {GREEN}BOOTSTRAP DONE!!!"
+	echo -e "\n ${GREEN}BOOTSTRAP DONE!!!"
 	echo "\n"
 }
 
@@ -326,7 +326,7 @@ function bootstrap_enter() {
 	then
 		run_installer
 	else
-	echo -e "{RED}You must source this script: 'source ./<script>.sh"
+	echo -e "${RED}You must source this script: 'source ./<script>.sh"
 	fi;
 }
 

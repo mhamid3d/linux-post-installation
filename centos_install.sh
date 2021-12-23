@@ -35,6 +35,7 @@ function install_shell_ext () {
 	unset ext_uuid
 	unset count
 	sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
+	rm ./${1}
 }
 
 function stage1 () {
@@ -49,15 +50,15 @@ function stage1 () {
 	
 	sudo yum -y groupinstall "Development Tools"
 
-	sudo yum -y install gnome-tweaks dconf-editor obs-studio
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar teamviewer
+	sudo yum -y install dconf-editor obs-studio
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
 
   echo -e "${GREEN}Mounting Main disk..."
 	sudo mkdir -p /mnt/mhamid/Main
 	sudo chmod -R 777 /mnt/mhamid
-	sudo echo "/dev/sda2	/mnt/mhamid/Main	ntfs-3g defaults	0 0" >> /etc/fstab
+	echo '/dev/sda2	/mnt/mhamid/Main	ntfs-3g defaults	0 0' | sudo tee -a /etc/fstab
 
 	echo -e "${GREEN}Configuring GNOME Shell Settings..."
 	gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
@@ -77,10 +78,15 @@ function stage1 () {
 	sudo yum -y install ./google-chrome-stable_current_x86_64.rpm
 	rm ./google-chrome-stable_current_x86_64.rpm
 
-  until confirm_data; do : ; done
+	echo -e "${GREEN}Installing Teamviewer..."
+	wget https://dl.teamviewer.com/download/linux/version_15x/teamviewer_15.25.5.x86_64.rpm
+	sudo yum -y install ./teamviewer_15.25.5.x86_64.rpm
+	rm ./teamviewer_15.25.5.x86_64.rpm
+
+	until confirm_data; do : ; done
 
 	tar -C /home/mhamid/bootstrap -xvf /home/mhamid/bootstrap/data_centos.tar
-	rm /home/mhamid/bootstrap/data.tar
+	rm /home/mhamid/bootstrap/data_centos.tar
 
 	echo -e "${GREEN}Configuring favorite apps..."
 	gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
@@ -89,9 +95,10 @@ function stage1 () {
 	install_shell_ext dash-to-paneljderose9.github.com.v42.shell-extension.zip
 	install_shell_ext system-monitorparadoxxx.zero.gmail.com.v39.shell-extension.zip
 	install_shell_ext services-systemdabteil.org.v19.shell-extension.zip
+	gsettings set org.gnome.shell enabled-extensions "['top-icons@gnome-shell-extensions.gcampax.github.com', 'dash-to-panel@jderose9.github.com', 'system-monitor@paradoxxx.zero.gmail.com', 'services-systemd@abteil.org']"
 
 	echo -e "${GREEN}Configuring gnome shell extensions..."
-	gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 38
+	gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 42
   gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 1
 	gsettings set org.gnome.shell.extensions.dash-to-panel trans-panel-opacity 0.6
 	gsettings set org.gnome.shell.extensions.system-monitor cpu-refresh-time 50
@@ -109,6 +116,8 @@ function stage1 () {
 	echo -e "${GREEN}Disabling SELINUX..."
 	sudo setenfore 0
 	sudo sed -i -e 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+	sudo hostnamectl set-hostname tundra
 
 	echo -e "${GREEN}Installing NVIDIA drivers..."
 	sudo yum -y install kernel-devel dkms
@@ -136,6 +145,7 @@ function stage2 () {
 	wget https://us.download.nvidia.com/XFree86/Linux-x86_64/470.63.01/NVIDIA-Linux-x86_64-470.63.01.run
 	chmod +x ./NVIDIA-Linux-x86_64-*.run
 	sudo ./NVIDIA-Linux-x86_64-*.run
+	rm ./NVIDIA-Linux-x86_64-*.run
 
 	echo "stage3" > /home/mhamid/bootstrap/.stage
 	

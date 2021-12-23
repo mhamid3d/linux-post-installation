@@ -34,6 +34,7 @@ function run_installer() {
 	gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
 	dconf write /org/gtk/settings/file-chooser/show-hidden true
 	gsettings set org.gnome.desktop.screensaver lock-enabled false
+	gsettings set org.gnome.desktop.session idle-delay 0
 
 
 	echo -e "${GREEN}Installing Google Chrome..."

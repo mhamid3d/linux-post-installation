@@ -118,6 +118,7 @@ function stage1 () {
 	sudo sed -i -e 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 	sudo hostnamectl set-hostname tundra
+	echo '127.0.0.1 localhost tundra' | sudo tee -a /etc/hosts
 
 	echo -e "${GREEN}Installing NVIDIA drivers..."
 	sudo yum -y install kernel-devel dkms

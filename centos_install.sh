@@ -221,7 +221,13 @@ function stage3 () {
 	tar -C /builds -zxvf Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
 	rm ./Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
 	mv /builds/Bokeh-v1.4.8_Nuke13.0-linux /builds/pgBokeh-v1.4.8
-
+	
+	echo -e "${GREEN}Installing VMWare..."
+	cd /home/mhamid/bootstrap
+	wget https://download3.vmware.com/software/wkst/file/VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
+	chmod +x ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
+	sudo ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
+	rm ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
 
 	echo -e "${GREEN}Installing Snap..."
 	sudo yum -y install snapd

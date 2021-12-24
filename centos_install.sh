@@ -51,7 +51,7 @@ function stage1 () {
 	sudo yum -y groupinstall "Development Tools"
 
 	sudo yum -y install dconf-editor obs-studio gnome-tweak-tool
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar libzip-devel
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
 
@@ -100,7 +100,7 @@ function stage1 () {
 	echo -e "${GREEN}Configuring gnome shell extensions..."
 	gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 42
 	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 1
-	gsettings set org.gnome.shell.extensions.dash-to-panel trans-panel-opacity 0.6
+	gsettings set org.gnome.shell.extensions.dash-to-panel trans-panel-opacity 0.4
 	gsettings set org.gnome.shell.extensions.system-monitor cpu-refresh-time 50
 	gsettings set org.gnome.shell.extensions.system-monitor memory-refresh-time 50
 	gsettings set org.gnome.shell.extensions.system-monitor net-refresh-time 50
@@ -228,6 +228,12 @@ function stage3 () {
 	chmod +x ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
 	sudo ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
 	rm ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
+	sudo /usr/lib/vmware/bin/licenseTool enter ZF3R0-FHED2-M80TY-8QYGC-NPKYF "" "" 16.0+ "VMware Workstation" /usr/lib/vmware
+	mkdir ~/vmware
+	cd ~/vmware
+	git clone -b v4.1.0 https://github.com/DrDonk/golocker.git
+	cd golocker/
+	sudo ./linux/unlocker install - install patches
 
 	echo -e "${GREEN}Installing Snap..."
 	sudo yum -y install snapd

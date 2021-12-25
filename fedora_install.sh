@@ -431,6 +431,33 @@ function stage3() {
 	unset sesi_id
 	unset sesi_host
 	rm /home/mhamid/bootstrap/hfs_keys.txt
+	
+	
+	echo -e "${GREEN}##########################################"
+	echo -e "Bootstrap DONE...Enjoy!"
+	echo -e "##########################################${NC}"
+	###
 
 
 }
+
+
+function bootstrap_enter() {
+	if [[ "${BASH_SOURCE[0]}" != "${0}" ]]
+	then
+		if [ -f /home/mhamid/bootstrap/.stage ]
+		then
+		current_stage=`cat /home/mhamid/bootstrap/.stage`
+		eval $current_stage
+		else
+		stage1
+		fi
+	else
+	echo "You must source this script: 'source ./<script>.sh"
+	fi;
+}
+
+
+bootstrap_enter
+unset GREEN
+unset RED

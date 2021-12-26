@@ -1,12 +1,13 @@
 #! /usr/bin/bash
 
-GREEN='\033[1;32m'
-RED='\033[1;31m'
+RED='\033[0;31m'
+NC='\033[0m'
+GREEN='\033[0;32m'
 
 function confirm_data() {
 	echo ""
 	echo ""
-	echo -e "${RED}Please download the data_centos.tar file and place it in the /home/mhamid/bootstrap directory"
+	echo -e "${GREEN}Please download the data_centos.tar file and place it in the ~/bootstrap directory${NC}"
 	echo ""
 	echo ""
 	read -p "Please enter 'yes' when complete: "
@@ -19,7 +20,7 @@ function confirm_data() {
 }
 
 function install_shell_ext () {
-	echo -e "${GREEN}Installing shell extension...${1}"
+	echo -e "${GREEN}Installing shell extension...${1}${NC}"
 	cd /home/mhamid/bootstrap/
 	wget "https://extensions.gnome.org/extension-data/${1}"
 	ext_uuid=`unzip -c ./${1} metadata.json | grep uuid | cut -d \" -f4`
@@ -40,7 +41,16 @@ function install_shell_ext () {
 
 function stage1 () {
 
-	echo -e "${GREEN}Updating & Installing required packages..."
+  echo -e "${GREEN}##########################################"
+	echo -e "Bootstrap beginning [STAGE 1]..."
+	echo -e "##########################################${NC}"
+	###
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Updating & Installing required packages..."
+	echo -e "##########################################${NC}"
+	###
 	sudo yum -y update
 	sudo yum -y install epel-release
 	sudo yum -y install yum-utils
@@ -55,12 +65,33 @@ function stage1 () {
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
 
-	echo -e "${GREEN}Mounting Main disk..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Mounting Main Disk + FSTAB Entry..."
+	echo -e "##########################################${NC}"
+	###
 	sudo mkdir -p /mnt/mhamid/Main
 	sudo chmod -R 777 /mnt/mhamid
+	sudo mount /dev/sda2 /mnt/mhamid/Main
 	echo '/dev/sda2	/mnt/mhamid/Main	ntfs-3g defaults	0 0' | sudo tee -a /etc/fstab
 
-	echo -e "${GREEN}Configuring GNOME Shell Settings..."
+
+	cd ~
+	mkdir bootstrap
+	cd ~/bootstrap
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing GNOME Shell Extensions..."
+	echo -e "##########################################${NC}"
+	###
+  install_shell_ext dash-to-paneljderose9.github.com.v42.shell-extension.zip
+	install_shell_ext system-monitorparadoxxx.zero.gmail.com.v39.shell-extension.zip
+	install_shell_ext services-systemdabteil.org.v19.shell-extension.zip
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Configuring GNOME Shell Settings..."
+	echo -e "##########################################${NC}"
+	###
 	gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
 	gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
 	gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
@@ -69,36 +100,13 @@ function stage1 () {
 	gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
 	gsettings set org.gnome.nautilus.preferences default-folder-viewer 'icon-view'
 	gsettings set org.gnome.desktop.background show-desktop-icons true
-
-	echo -e "${GREEN}Installing Google Chrome..."
-	cd ~
-	mkdir bootstrap
-	cd bootstrap
-	wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-	sudo yum -y install ./google-chrome-stable_current_x86_64.rpm
-	rm ./google-chrome-stable_current_x86_64.rpm
-
-	echo -e "${GREEN}Installing Teamviewer..."
-	wget https://dl.teamviewer.com/download/linux/version_15x/teamviewer_15.25.5.x86_64.rpm
-	sudo yum -y install ./teamviewer_15.25.5.x86_64.rpm
-	rm ./teamviewer_15.25.5.x86_64.rpm
-
-	until confirm_data; do : ; done
-
-	tar -C /home/mhamid/bootstrap -xvf /home/mhamid/bootstrap/data_centos.tar
-	rm /home/mhamid/bootstrap/data_centos.tar
-
-	echo -e "${GREEN}Configuring favorite apps..."
-	gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
-
-	echo "Installing gnome shell extensions..."
-	install_shell_ext dash-to-paneljderose9.github.com.v42.shell-extension.zip
-	install_shell_ext system-monitorparadoxxx.zero.gmail.com.v39.shell-extension.zip
-	install_shell_ext services-systemdabteil.org.v19.shell-extension.zip
-	gsettings set org.gnome.shell enabled-extensions "['top-icons@gnome-shell-extensions.gcampax.github.com', 'dash-to-panel@jderose9.github.com', 'system-monitor@paradoxxx.zero.gmail.com', 'services-systemd@abteil.org']"
-
-	echo -e "${GREEN}Configuring gnome shell extensions..."
-	gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 42
+	gsettings set org.gnome.gedit.preferences.editor scheme 'oblivion'
+	gsettings set ca.desrt.dconf-editor.Settings show-warning false
+	gsettings set org.gnome.desktop.session idle-delay 900
+	gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+  gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
+  gsettings set org.gnome.shell enabled-extensions "['top-icons@gnome-shell-extensions.gcampax.github.com', 'dash-to-panel@jderose9.github.com', 'system-monitor@paradoxxx.zero.gmail.com', 'services-systemd@abteil.org']"
+  gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 42
 	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 1
 	gsettings set org.gnome.shell.extensions.dash-to-panel trans-panel-opacity 0.4
 	gsettings set org.gnome.shell.extensions.system-monitor cpu-refresh-time 50
@@ -108,19 +116,67 @@ function stage1 () {
 	gsettings set org.gnome.shell.extensions.system-monitor memory-graph-width 85
 	gsettings set org.gnome.shell.extensions.system-monitor net-graph-width 85
 
-	echo -e "${GREEN}Configuring Wallpaper..."
-	cd ~/Pictures
-	wget https://w.wallhaven.cc/full/ox/wallhaven-oxoz6l.png
-	dconf write /org/gnome/desktop/background/picture-uri "'file:///home/mhamid/Pictures/wallhaven-oxoz6l.png'"
 
-	echo -e "${GREEN}Disabling SELINUX..."
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Google Chrome..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/bootstrap
+	wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+	sudo yum -y install ./google-chrome-stable_current_x86_64.rpm
+	rm ./google-chrome-stable_current_x86_64.rpm
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing TeamViewer..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/bootstrap
+	wget https://dl.teamviewer.com/download/linux/version_15x/teamviewer_15.25.5.x86_64.rpm
+	sudo yum -y install ./teamviewer_15.25.5.x86_64.rpm
+	rm ./teamviewer_15.25.5.x86_64.rpm
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Setting Awesome Wallpaper..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/Pictures
+	mkdir Wallpapers
+	cd Wallpapers
+	wget https://raw.githubusercontent.com/mhamid3d/linux-post-installation/main/wallpaper_wallpaperflare.jpg
+	dconf write /org/gnome/desktop/background/picture-uri "'file:///home/mhamid/Pictures/Wallpapers/wallpaper_wallpaperflare.jpg'"
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Disabling SELinux..."
+	echo -e "##########################################${NC}"
+	###
 	sudo setenfore 0
 	sudo sed -i -e 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Changing Host name..."
+	echo -e "##########################################${NC}"
+	###
 	sudo hostnamectl set-hostname tundra
 	echo '127.0.0.1 localhost tundra' | sudo tee -a /etc/hosts
 
-	echo -e "${GREEN}Installing NVIDIA drivers..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Creating SSH Keys..."
+	echo -e "##########################################${NC}"
+	###
+	sudo systemctl restart sshd
+	ssh-keygen -t rsa -b 4096
+	chmod -R 700 ~/.ssh/
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Preparing install of NVIDIA Drivers..."
+	echo -e "##########################################${NC}"
+	###
 	sudo yum -y install kernel-devel dkms
 	sudo sed -i 's#GRUB_CMDLINE_LINUX="crashkernel=auto rhgb quiet"#GRUB_CMDLINE_LINUX="crashkernel=auto rhgb quiet rd.driver.blacklist=nouveau nouveau.modeset=0"#g' /etc/default/grub
 	sudo grub2-mkconfig -o /boot/grub2/grub.cfg
@@ -130,34 +186,61 @@ function stage1 () {
 	sudo chmod 755 /etc/modprobe.d/blacklist.conf
 	sudo mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r)-nouveau.img
 	sudo dracut /boot/initramfs-$(uname -r).img $(uname -r)
+	sudo systemctl set-default multi-user.target
 
-	echo "stage2" > /home/mhamid/bootstrap/.stage
+	echo "stage2" > ~/bootstrap/.stage
 
-	echo -e "${RED}Restart your machine before continuing. DO NOT LOGIN FOR STAGE 2, ENTER TERMINAL MODE AND RUN THE SCRIPT TO CONTINUE"
-
+	echo -e "${RED}##########################################"
+	echo -e "Restart your computer now, it will boot in terminal mode, just source the installer again and it will continue..."
+	echo -e "##########################################${NC}"
+	###
 }
 
 function stage2 () {
-	echo -e "${GREEN}LINUX BOOSTRAP - RESUMING - STAGE [2] ......"
+	echo -e "${GREEN}##########################################"
+	echo -e "Bootstrap resuming [STAGE 2]..."
+	echo -e "##########################################${NC}"
+	echo
+	echo
+	echo
+	###
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing NVIDIA Drivers..."
+	echo -e "##########################################${NC}"
+	###
 
 	echo -e "${GREEN}Installing NVIDIA drivers..."
-	sudo systemctl isolate multi-user.target
-	cd /home/mhamid/bootstrap
-	wget https://us.download.nvidia.com/XFree86/Linux-x86_64/470.63.01/NVIDIA-Linux-x86_64-470.63.01.run
-	chmod +x ./NVIDIA-Linux-x86_64-*.run
-	sudo ./NVIDIA-Linux-x86_64-*.run
-	rm ./NVIDIA-Linux-x86_64-*.run
+	cd ~/bootstrap
+	wget https://us.download.nvidia.com/XFree86/Linux-x86_64/470.94/NVIDIA-Linux-x86_64-470.94.run
+	chmod +x ./NVIDIA-Linux-x86_64-470.94.run
+	sudo ./NVIDIA-Linux-x86_64-470.94.run
+	rm ./NVIDIA-Linux-x86_64-470.94.run
+	sudo systemctl set-default graphical.target
 
-	echo "stage3" > /home/mhamid/bootstrap/.stage
-
-	echo -e "${RED}Restart your machine before continuing. YOU CAN USE GUI MODE FROM HERE"
+	echo "stage3" > ~/bootstrap/.stage
+  
+  echo
+  echo
+	echo -e "${RED}##########################################"
+	echo -e "Restart your computer now, it will boot in graphical mode again, just source the installer again and it will continue..."
+	echo -e "##########################################${NC}"
+	###
 }
 
 function stage3 () {
-	echo -e "${GREEN}LINUX BOOSTRAP - RESUMING - STAGE [3] ......"
+	echo -e "${GREEN}##########################################"
+	echo -e "Bootstrap resuming [STAGE 3]..."
+	echo -e "##########################################${NC}"
+	echo
+	echo
+	###
 
-	echo -e "${GREEN}Installing Anaconda..."
-	cd /home/mhamid/bootstrap/
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Anaconda..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/bootstrap/
 	wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
 	chmod +x ./Anaconda3-2021.11-Linux-x86_64.sh
 	./Anaconda3-2021.11-Linux-x86_64.sh
@@ -184,9 +267,17 @@ function stage3 () {
 	conda install -y -c bioconda perl-local-lib
 	pip install timeago
 	ln -s ~/anaconda/envs/cometpy37/syncthing ~/anaconda/envs/cometpy37/bin/syncthing
+	
+  until confirm_data; do : ; done
+	tar -C /home/mhamid/bootstrap -xvf /home/mhamid/bootstrap/data_centos.tar
+	rm /home/mhamid/bootstrap/data_centos.tar
 
-	echo -e "${GREEN}Installing RLM..."
-	cd /home/mhamid/bootstrap/data/RLM_Linux-64
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing RLM..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/bootstrap/data/RLM_Linux-64
 	chmod +x ./rlm_install.sh
 	sudo ./rlm_install.sh
 	source /opt/rlm/rlmenvset.sh
@@ -194,14 +285,22 @@ function stage3 () {
 	sudo systemctl restart rlmd
 	sudo systemctl enable rlmd
 
-	echo -e "${GREEN}Installing PyCharm..."
-	cd /home/mhamid/bootstrap/
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing PyCharm..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/bootstrap/
 	wget https://download-cdn.jetbrains.com/python/pycharm-community-2021.1.3.tar.gz
 	sudo tar -C /opt -zxvf pycharm-community-2021.1.3.tar.gz
 	rm ./pycharm-community-2021.1.3.tar.gz
 	sudo mv /opt/pycharm-community-2021.1.3 /opt/PyCharm-Community-2021.1.3
 
-	echo -e "${GREEN}Installing builds..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Builds..."
+	echo -e "##########################################${NC}"
+	###
 	sudo mkdir /builds
 	sudo chmod -R 777 /builds
 	cd /builds
@@ -210,7 +309,7 @@ function stage3 () {
 
 	cp -r /home/mhamid/bootstrap/data/ktoa-3.2.2.1-kat4.0-linux /builds/
 
-	cd /home/mhamid/bootstrap
+	cd ~/bootstrap
 	wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_DEVKIT_Linux.tgz
 	mkdir -p /builds/MayaDevkit/2022
 	tar -zxvf Autodesk_Maya_2022_DEVKIT_Linux.tgz
@@ -222,8 +321,12 @@ function stage3 () {
 	rm ./Bokeh-v1.4.8_Nuke13.0-linux.tar.gz
 	mv /builds/Bokeh-v1.4.8_Nuke13.0-linux /builds/pgBokeh-v1.4.8
 	
-	echo -e "${GREEN}Installing VMWare..."
-	cd /home/mhamid/bootstrap
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing VMWare..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/bootstrap
 	wget https://download3.vmware.com/software/wkst/file/VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
 	chmod +x ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
 	sudo ./VMware-Workstation-Full-16.2.1-18811642.x86_64.bundle
@@ -235,7 +338,11 @@ function stage3 () {
 	cd golocker/
 	sudo ./linux/unlocker install - install patches
 
-	echo -e "${GREEN}Installing Snap..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Snap..."
+	echo -e "##########################################${NC}"
+	###
 	sudo yum -y install snapd
 	sudo systemctl enable --now snapd.socket
 	sudo ln -s /var/lib/snapd/snap /snap
@@ -245,7 +352,11 @@ function stage3 () {
 	sudo snap install slack --classic
 	sudo snap install discord audacity postman inkscape
 
-	echo -e "${GREEN}Installing Foundry Products..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Foundry Products..."
+	echo -e "##########################################${NC}"
+	###
 	cd /home/mhamid/bootstrap
 	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.1v1/Nuke13.1v1-linux-x86_64.tgz
 	wget https://thefoundry.s3.amazonaws.com/products/modo/15.1v1/Modo15.1v1_Linux.run
@@ -280,7 +391,11 @@ function stage3 () {
 	rm -rf ./katana
 	rm ./Nuke13.1v1-linux-x86_64.run
 
-	echo -e "${GREEN}Installing Substance products..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Substance Products..."
+	echo -e "##########################################${NC}"
+	###
 	cd /home/mhamid/bootstrap
 	wget https://download.substance3d.com/adobe-substance-3d-designer/11.x/Adobe_Substance_3D_Designer-11.2.1-4934-linux-x64-standard.rpm
 	wget https://download.substance3d.com/adobe-substance-3d-painter/7.x/Adobe_Substance_3D_Painter-7.2.3-1197-linux-x64-standard.rpm
@@ -290,7 +405,11 @@ function stage3 () {
 	sudo cp data/Substance_Patches/Adobe\ Substance\ 3D\ Designer /opt/Adobe/Adobe_Substance_3D_Designer/Adobe\ Substance\ 3D\ Designer
 	sudo cp data/Substance_Patches/Adobe\ Substance\ 3D\ Painter /opt/Adobe/Adobe_Substance_3D_Painter/Adobe\ Substance\ 3D\ Painter
 
-	echo -e "${GREEN}Installing Houdini 19..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Houdini..."
+	echo -e "##########################################${NC}"
+	###
 	cd /home/mhamid/bootstrap
 	tar -zxvf data/houdini-19.0.383-linux_x86_64_gcc9.3.tar.gz
 	cd houdini-19.0.383-linux_x86_64_gcc9.3/
@@ -304,21 +423,33 @@ function stage3 () {
 	sudo /etc/init.d/sesinetd start
 	sudo chmod +x /home/mhamid/bootstrap/data/Houdini_Patches/Houdini-Tools
 
-	echo -e "${GREEN}Installing Davinci Resolve..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Davinci Resolve..."
+	echo -e "##########################################${NC}"
+	###
 	cd /home/mhamid/bootstrap/data
 	chmod +x ./DaVinci_Resolve_Studio_17.2.2_Linux.run
 	sudo ./DaVinci_Resolve_Studio_17.2.2_Linux.run -i
 	sudo cp ./ResolveCrack/resolve /opt/resolve/bin/resolve
 	rm ~/Desktop/com.blackmagicdesign.resolve.desktop
 
-	echo -e "${GREEN}Installing RV Player..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing RV Player..."
+	echo -e "##########################################${NC}"
+	###
 	cd /home/mhamid/bootstrap
 	wget https://sg-software.ems.autodesk.com/deploy/rv/Current_Release/Linux-release.tar.gz
 	sudo tar -C /opt -zxvf Linux-release.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-* /opt/RV
 	rm Linux-release.tar.gz
 
-	echo -e "${GREEN}Installing Maya..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Maya..."
+	echo -e "##########################################${NC}"
+	###
 	cd /home/mhamid/bootstrap/data/Maya2022
 	sudo yum -y install ./Maya2022_64-2022.0-217.x86_64.rpm
 	sudo cp ./maya.bin /usr/autodesk/maya2022/bin/maya.bin
@@ -327,7 +458,11 @@ function stage3 () {
 	sudo chmod a-rwx /home/mhamid/.autodesk/UI/Autodesk/ADPSDK/JSON/
 	sudo /usr/autodesk/maya2022/bin/mayapy -m pip install pymel
 
-	echo -e "${GREEN}Installing Pixar USD..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Build Pixar USD..."
+	echo -e "##########################################${NC}"
+	###
 	mkdir ~/workspace
 	cd ~/workspace
 	git clone -b v21.11 https://github.com/PixarAnimationStudios/USD.git
@@ -339,7 +474,11 @@ function stage3 () {
 	cd ~/workspace/USD
 	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 
-	echo -e "${GREEN}Installing Maya USD..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Building Maya USD..."
+	echo -e "##########################################${NC}"
+	###
 	cd ~/workspace
 	git clone -b v0.15.0 https://github.com/Autodesk/maya-usd.git
 	cd maya-usd
@@ -358,7 +497,11 @@ function stage3 () {
 	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.15.0#g' /usr/autodesk/mayausd/2022/0.15.0/mayaUSD.mod
 	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.15.0#g' /usr/autodesk/mayausd/2022/0.15.0/pxrUSD.mod
 
-	echo -e "${GREEN}Pulling CometPipeline"
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Pulling CometPipeline..."
+	echo -e "##########################################${NC}"
+	###
 	conda activate cometpy37
 	git config --global credential.helper store
 	mkdir ~/_dev
@@ -370,7 +513,11 @@ function stage3 () {
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_activate.sh ~/anaconda/envs/cometpy37/etc/conda/activate.d/site_env_activate.sh
 	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
 
-	echo -e "${GREEN}Patching Houdini..."
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Patching Houdini..."
+	echo -e "##########################################${NC}"
+	###
 	cd /opt/hfs19.0.383
 	source ./houdini_setup
 	sesi_id=`/usr/lib/sesi/sesictrl print-server | grep SERVER | tr '\n' ' ' | awk '{print $NF}' | xargs`
@@ -384,16 +531,27 @@ function stage3 () {
 	unset sesi_host
 	rm /home/mhamid/bootstrap/hfs_keys.txt
 
-	echo -e "${GREEN}Copying bashrc file..."
-	cp /home/mhamid/bootstrap/data/.bashrc ~/.bashrc
 
-	echo -e "\n INSTALL DONE!!!"
-	echo -e "\n"
-	echo -e "\n Please manually do the following tasks:"
-	echo -e "\n	1) Generate license.gto file from windows and place it /opt/RV-*/etc/"
+	echo -e "${GREEN}##########################################"
+	echo -e "Copying bashrc file..."
+	echo -e "##########################################${NC}"
+	###
+	cp /home/mhamid/bootstrap/data/.bashrc ~/.bashrc
+	source ~/.bashrc
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Bootstrap DONE...Enjoy!"
+	echo -e "##########################################${NC}"
+	echo
+	echo
+	echo
+	echo -e "${GREEN}##########################################"
+	echo -e "Please manually do the following tasks:"
+	echo -e "##########################################${NC}"
+	echo "   1) Generate license.gto file from windows and place it /opt/RV-*/etc/"
 
 }
-
 
 function bootstrap_enter() {
 	if [[ "${BASH_SOURCE[0]}" != "${0}" ]]
@@ -409,7 +567,6 @@ function bootstrap_enter() {
 	echo "You must source this script: 'source ./<script>.sh"
 	fi;
 }
-
 
 bootstrap_enter
 unset GREEN

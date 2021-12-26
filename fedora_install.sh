@@ -66,7 +66,10 @@ function stage1() {
 	sudo dnf -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 	sudo dnf -y makecache
 	sudo dnf -y update
-	sudo dnf -y install google-chrome-stable obs-studio gnome-tweaks dconf-editor ntfs-3g cmake curl glfw glfw-devel libpng-devel mesa-libGLw-devel mesa-libGLU-devel qbittorrent wine vlc unar gparted libzip-devel gnome-extensions-app file-roller file-roller-nautilus VirtualBox pycharm-community inkscape discord audacity audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi libpng15
+	sudo dnf -y install google-chrome-stable obs-studio gnome-tweaks dconf-editor ntfs-3g cmake curl glfw glfw-devel libpng-devel mesa-libGLw-devel mesa-libGLU-devel qbittorrent wine vlc unar gparted libzip-devel gnome-extensions-app file-roller file-roller-nautilus VirtualBox pycharm-community inkscape audacity audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi libpng15 openssh
+	
+	sudo dnf -y groupinstall "Development Tools" "Development Libraries"
+	sudo dnf -y install gcc-c++
 
 
 	echo -e "${GREEN}##########################################"
@@ -106,7 +109,7 @@ function stage1() {
 	gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
 	gsettings set org.gnome.gedit.preferences.editor scheme 'oblivion'
 	gsettings set ca.desrt.dconf-editor.Settings show-warning false
-	gsettings set org.gnome.desktop.session idle-delay 90
+	gsettings set org.gnome.desktop.session idle-delay 900
 	gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
 	gnome-extensions disable background-logo@fedorahosted.org
 	#gsettings set org.gnome.shell enabled-extensions "['dash-to-panel@jderose9.github.com', 'system-monitor@paradoxxx.zero.gmail.com', 'appindicatorsupport@rgcjonas.gmail.com']"
@@ -149,6 +152,15 @@ function stage1() {
 	###
 	sudo hostnamectl set-hostname fedora
 	echo '127.0.0.1 localhost fedora' | sudo tee -a /etc/hosts
+	
+	
+	echo -e "${GREEN}##########################################"
+	echo -e "Creating SSH Keys..."
+	echo -e "##########################################${NC}"
+	###
+	sudo systemctl restart sshd
+	ssh-keygen -t rsa -b 4096
+	chmod -R 700 ~/.ssh/
 
 
 	echo -e "${GREEN}##########################################"
@@ -186,6 +198,7 @@ function stage2() {
 	wget https://us.download.nvidia.com/XFree86/Linux-x86_64/470.94/NVIDIA-Linux-x86_64-470.94.run
 	chmod +x ./NVIDIA-Linux-x86_64-470.94.run
 	sudo ./NVIDIA-Linux-x86_64-470.94.run
+	rm ./NVIDIA-Linux-x86_64-470.94.run
 	sudo systemctl set-default graphical.target
 	
 	echo "stage3" > ~/bootstrap/.stage
@@ -290,6 +303,7 @@ function stage3() {
 	sudo snap install snap-store
 	sudo snap install code --classic
 	sudo snap install slack --classic
+	sudo snap install discord
 
 
 	echo -e "${GREEN}##########################################"
@@ -411,8 +425,70 @@ function stage3() {
 	sudo /usr/autodesk/maya2022/bin/mayapy -m pip install pymel
 
 
+	echo -e "${GREEN}##########################################"
+	echo -e "Building Pixar USD..."
+	echo -e "##########################################${NC}"
+	###
+	mkdir ~/workspace
+	cd ~/workspace
+	git clone -b v21.11 https://github.com/PixarAnimationStudios/USD.git
+	sudo mkdir /opt/USD
+	sudo chmod -R 777 /opt/USD
+	conda activate cometpy37
+	cd ~/workspace/USD
+	python build_scripts/build_usd.py --build-args=USD,"-DPXR_USE_PYTHON_3=ON" --alembic --hdf5 --no-tests --opencolorio --openimageio --usdview /opt/USD
 
-	# do usd stuff here
+	echo -e "${GREEN}##########################################"
+	echo -e "Building Maya USD..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/workspace
+	git clone -b v0.15.0 https://github.com/Autodesk/maya-usd.git
+	cd maya-usd
+	mkdir workspace
+	python build.py --build-args=-DBUILD_WITH_PYTHON_3=ON,-DBUILD_AL_PLUGIN=OFF,-DBUILD_STRICT_MODE=OFF --maya-location /usr/autodesk/maya2022 --pxrusd-location /opt/USD --devkit-location /builds/MayaDevkit/2022/devkitBase --qt-location /home/mhamid/anaconda/envs/cometpy37/lib workspace/
+	sudo mkdir -p /usr/autodesk/mayausd/2022/
+	sudo cp -r workspace/install/RelWithDebInfo/ /usr/autodesk/mayausd/2022/0.15.0
+	sudo mv /usr/autodesk/mayausd/2022/0.15.0/plugin/pxr/lib/python/pxr/UsdMaya /opt/USD/lib/python/pxr/
+	sudo chown mhamid:mhamid /opt/USD/lib/python/pxr/UsdMaya/
+	sudo rm -rf /usr/autodesk/mayausd/2022/0.15.0/plugin/pxr/lib/python/pxr
+	sudo mkdir -p /usr/autodesk/modules/maya/2022/
+	sudo ln -s /usr/autodesk/mayausd/2022/0.15.0/pxrUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo ln -s /usr/autodesk/mayausd/2022/0.15.0/mayaUSD.mod /usr/autodesk/modules/maya/2022/
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.15.0/pxrUSD.mod
+	sudo chmod 777 /usr/autodesk/mayausd/2022/0.15.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.15.0#g' /usr/autodesk/mayausd/2022/0.15.0/mayaUSD.mod
+	sudo sed -i 's#/home/mhamid/workspace/maya-usd/workspace/install/RelWithDebInfo#/usr/autodesk/mayausd/2022/0.15.0#g' /usr/autodesk/mayausd/2022/0.15.0/pxrUSD.mod
+	
+	
+	echo -e "${GREEN}##########################################"
+	echo -e "Pulling CometPipeline..."
+	echo -e "##########################################${NC}"
+	###
+	conda activate cometpy37
+	git config --global credential.helper store
+	mkdir ~/_dev
+	cd ~/_dev
+	git clone https://github.com/CometPipeline/cometpipeline.git
+	mkdir -p ~/anaconda/envs/cometpy37/etc/conda/activate.d
+	mkdir -p ~/anaconda/envs/cometpy37/etc/conda/deactivate.d
+	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_activate.sh ~/anaconda/envs/cometpy37/etc/conda/activate.d/site_env_activate.sh
+	ln -s ~/_dev/cometpipeline/src/cometpipeline/bin/site_env_deactivate.sh ~/anaconda/envs/cometpy37/etc/conda/deactivate.d/site_env_deactivate.sh
+	
+	
+		
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing MacOS KVM..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~
+	git clone https://github.com/mhamid3d/macOS-Simple-KVM.git
+	conda activate base
+	conda deactivate
+	sudo dnf -y install qemu qemu-img python3-pip
+	cd ./macOS-Simple-KVM
+	./jumpstart.sh --catalina
+	qemu-img create -f qcow2 MyDisk.qcow2 128G
 
 
 	echo -e "${GREEN}##########################################"
@@ -431,6 +507,14 @@ function stage3() {
 	unset sesi_id
 	unset sesi_host
 	rm /home/mhamid/bootstrap/hfs_keys.txt
+	
+	
+	echo -e "${GREEN}##########################################"
+	echo -e "Copying bashrc file..."
+	echo -e "##########################################${NC}"
+	###
+	cp ~/bootstrap/data/.bashrc ~/.bashrc
+	source ~/.bashrc
 	
 	
 	echo -e "${GREEN}##########################################"

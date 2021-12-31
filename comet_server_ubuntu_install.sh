@@ -20,7 +20,7 @@ echo "source ~/dev/cometenv/bin/activate" | tee -a ~/.bashrc
 source ~/.bashrc
 
 sudo apt -y install mysql-server mysql-client
-pip install django djangorestframework djangorestframework-simplejwt mysqlclient pymysql
+pip install django djangorestframework djangorestframework-simplejwt mysqlclient pymysql cryptography
 
 
 sudo ufw allow OpenSSH

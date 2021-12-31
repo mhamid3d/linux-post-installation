@@ -18,13 +18,13 @@ virtualenv cometenv
 echo | tee -a ~/.bashrc
 echo "source ~/dev/cometenv/bin/activate" | tee -a ~/.bashrc
 source ~/.bashrc
-pip install django djangorestframework djangorestframework-simplejwt
+
+sudo apt -y install mysql-server mysql-client
+pip install django djangorestframework djangorestframework-simplejwt mysqlclient
 
 
 sudo ufw allow OpenSSH
 sudo ufw enable
-
-sudo apt -y install mysql-server mysql-client
 
 echo "export COMET_DB=comet" >> ~/.bashrc
 

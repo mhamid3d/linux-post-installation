@@ -24,7 +24,7 @@ pip install django djangorestframework djangorestframework-simplejwt
 sudo ufw allow OpenSSH
 sudo ufw enable
 
-sudo apt -y install mysql-server
+sudo apt -y install mysql-server mysql-client
 
 echo "export COMET_DB=comet" >> ~/.bashrc
 

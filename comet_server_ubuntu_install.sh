@@ -19,3 +19,13 @@ echo | tee -a ~/.bashrc
 echo "source ~/dev/cometenv/bin/activate" | tee -a ~/.bashrc
 source ~/.bashrc
 pip install django djangorestframework djangorestframework-simplejwt
+
+
+sudo ufw allow OpenSSH
+sudo ufw enable
+
+sudo apt -y install mysql-server
+
+echo "export COMET_DB=comet" >> ~/.bashrc
+
+# generate the password from https://passwordsgenerator.net/ and place it in the COMET_DB_PWD env var in bashrc

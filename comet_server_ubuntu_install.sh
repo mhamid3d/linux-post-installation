@@ -19,6 +19,7 @@ echo | tee -a ~/.bashrc
 echo "source ~/dev/cometenv/bin/activate" | tee -a ~/.bashrc
 source ~/.bashrc
 
+sudo apt -y install postgresql postgresql-contrib
 
 pip install django djangorestframework djangorestframework-simplejwt
 

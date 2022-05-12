@@ -61,7 +61,7 @@ function stage1 () {
 	sudo yum -y groupinstall "Development Tools"
 
 	sudo yum -y install dconf-editor obs-studio gnome-tweak-tool
-	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar libzip-devel gparted
+	sudo yum -y install ntfs-3g boost boost-devel bzip2-devel cmake curl glfw glfw-devel libpng-devel samba samba-client mesa-libGLw gamin audiofile audiofile-devel xorg-x11-fonts-ISO8859-1-75dpi xorg-x11-fonts-ISO8859-1-100dpi redhat-lsb-core gtest-devel qbittorrent glew-devel graphviz-devel libtiff-devel jemalloc-devel tbb-devel doxygen gtest-devel tcsh libgcrypt-devel libXScrnSaver wine vlc libdbusmenu unar libzip-devel gparted VirtualBox VirtualBox-guest-additions tree filezilla
 	sudo yum -y install centos-release-scl-rh
 	sudo yum -y install devtoolset-9
 
@@ -83,9 +83,29 @@ function stage1 () {
 	echo -e "Installing GNOME Shell Extensions..."
 	echo -e "##########################################${NC}"
 	###
-  install_shell_ext dash-to-paneljderose9.github.com.v42.shell-extension.zip
+  	install_shell_ext dash-to-paneljderose9.github.com.v42.shell-extension.zip
 	install_shell_ext system-monitorparadoxxx.zero.gmail.com.v39.shell-extension.zip
 	install_shell_ext services-systemdabteil.org.v19.shell-extension.zip
+	install_shell_ext TopIcons@phocean.net.v22.shell-extension.zip
+
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing Papirus-Dark Icon Pack..."
+	echo -e "##########################################${NC}"
+	###
+	cd ~/bootstrap
+	mkdir ~/.icons
+	git clone https://github.com/PapirusDevelopmentTeam/papirus-icon-theme.git
+	mv papirus-icon-theme/Papirus/ ~/.icons/
+	mv papirus-icon-theme/Papirus-Dark/ ~/.icons/
+	mv papirus-icon-theme/Papirus-Light/ ~/.icons/
+	mv papirus-icon-theme/ePapirus/ ~/.icons/
+	mv papirus-icon-theme/ePapirus-Dark/ ~/.icons/
+	rm -rf ./papirus-icon-theme
+	for d in ~/.icons/*/
+	do
+		gtk-update-icon-cache "$d"
+	done
 
 
 	echo -e "${GREEN}##########################################"
@@ -95,7 +115,6 @@ function stage1 () {
 	gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
 	gsettings set org.gnome.desktop.wm.preferences resize-with-right-button true
 	gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
-	gsettings set org.gnome.shell enabled-extensions "['top-icons@gnome-shell-extensions.gcampax.github.com']"
 	dconf write /org/gtk/settings/file-chooser/show-hidden true
 	gsettings set org.gnome.nautilus.icon-view default-zoom-level 'standard'
 	gsettings set org.gnome.nautilus.preferences default-folder-viewer 'icon-view'
@@ -104,17 +123,19 @@ function stage1 () {
 	gsettings set ca.desrt.dconf-editor.Settings show-warning false
 	gsettings set org.gnome.desktop.session idle-delay 900
 	gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
-  gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
-  gsettings set org.gnome.shell enabled-extensions "['top-icons@gnome-shell-extensions.gcampax.github.com', 'dash-to-panel@jderose9.github.com', 'system-monitor@paradoxxx.zero.gmail.com', 'services-systemd@abteil.org']"
-  gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 42
+  	gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'google-chrome.desktop']"
+  	gsettings set org.gnome.shell enabled-extensions "['services-systemd@abteil.org', 'system-monitor@paradoxxx.zero.gmail.com', 'dash-to-panel@jderose9.github.com', 'TopIcons@phocean.net']"
+  	gsettings set org.gnome.shell.extensions.dash-to-panel panel-size 42
 	gsettings set org.gnome.shell.extensions.dash-to-panel trans-use-custom-opacity 1
-	gsettings set org.gnome.shell.extensions.dash-to-panel trans-panel-opacity 0.4
+	gsettings set org.gnome.shell.extensions.dash-to-panel trans-panel-opacity 0.7
 	gsettings set org.gnome.shell.extensions.system-monitor cpu-refresh-time 50
 	gsettings set org.gnome.shell.extensions.system-monitor memory-refresh-time 50
 	gsettings set org.gnome.shell.extensions.system-monitor net-refresh-time 50
 	gsettings set org.gnome.shell.extensions.system-monitor cpu-graph-width 85
 	gsettings set org.gnome.shell.extensions.system-monitor memory-graph-width 85
 	gsettings set org.gnome.shell.extensions.system-monitor net-graph-width 85
+	gsettings set org.gnome.shell.extensions.topicons icon-size 20
+	gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
 
 
 	echo -e "${GREEN}##########################################"
@@ -209,8 +230,6 @@ function stage2 () {
 	echo -e "Installing NVIDIA Drivers..."
 	echo -e "##########################################${NC}"
 	###
-
-	echo -e "${GREEN}Installing NVIDIA drivers..."
 	cd ~/bootstrap
 	wget https://us.download.nvidia.com/XFree86/Linux-x86_64/470.94/NVIDIA-Linux-x86_64-470.94.run
 	chmod +x ./NVIDIA-Linux-x86_64-470.94.run
@@ -219,9 +238,9 @@ function stage2 () {
 	sudo systemctl set-default graphical.target
 
 	echo "stage3" > ~/bootstrap/.stage
-  
-  echo
-  echo
+
+  	echo
+  	echo
 	echo -e "${RED}##########################################"
 	echo -e "Restart your computer now, it will boot in graphical mode again, just source the installer again and it will continue..."
 	echo -e "##########################################${NC}"
@@ -267,8 +286,8 @@ function stage3 () {
 	conda install -y -c bioconda perl-local-lib
 	pip install timeago
 	ln -s ~/anaconda/envs/cometpy37/syncthing ~/anaconda/envs/cometpy37/bin/syncthing
-	
-  until confirm_data; do : ; done
+
+  	until confirm_data; do : ; done
 	tar -C /home/mhamid/bootstrap -xvf /home/mhamid/bootstrap/data_centos.tar
 	rm /home/mhamid/bootstrap/data_centos.tar
 
@@ -307,7 +326,7 @@ function stage3 () {
 	git clone -b v1.2 https://github.com/colour-science/OpenColorIO-Configs.git
 	git clone -b 1.4.0 https://github.com/Psyop/Cryptomatte.git
 
-	cp -r /home/mhamid/bootstrap/data/ktoa-3.2.2.1-kat4.0-linux /builds/
+	cp -r /home/mhamid/bootstrap/data/ktoa-4.0.0.3-kat4.5-linux /builds/
 
 	cd ~/bootstrap
 	wget https://autodesk-adn-transfer.s3-us-west-2.amazonaws.com/ADN+Extranet/M%26E/Maya/devkit+2022/Autodesk_Maya_2022_DEVKIT_Linux.tgz
@@ -358,13 +377,13 @@ function stage3 () {
 	echo -e "##########################################${NC}"
 	###
 	cd /home/mhamid/bootstrap
-	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.1v1/Nuke13.1v1-linux-x86_64.tgz
+	wget https://thefoundry.s3.amazonaws.com/products/nuke/releases/13.1v2/Nuke13.1v2-linux-x86_64.tgz
 	wget https://thefoundry.s3.amazonaws.com/products/modo/15.1v1/Modo15.1v1_Linux.run
 	wget https://s3.amazonaws.com/thefoundry/products/mari/releases/5.0v1/Mari5.0v1-linux-x86-release-64.run
 	wget https://thefoundry.s3.amazonaws.com/products/katana/releases/5.0v1/Katana5.0v1-linux-x86-release-64.tgz
 
-	tar -zxvf Nuke13.1v1-linux-x86_64.tgz
-	rm ./Nuke13.1v1-linux-x86_64.tgz
+	tar -zxvf Nuke13.1v2-linux-x86_64.tgz
+	rm ./Nuke13.1v2-linux-x86_64.tgz
 	mkdir ./katana
 	tar -C ./katana -zxvf Katana5.0v1-linux-x86-release-64.tgz
 	rm ./Katana5.0v1-linux-x86-release-64.tgz
@@ -372,14 +391,14 @@ function stage3 () {
 	chmod +x ./Mari5.0v1-linux-x86-release-64.run
 	chmod +x ./Modo15.1v1_Linux.run
 	chmod +x ./katana/install.sh
-	chmod +x ./Nuke13.1v1-linux-x86_64.run
+	chmod +x ./Nuke13.1v2-linux-x86_64.run
 
 	sudo mkdir /opt/Mari5.0v1
 	sudo mkdir /opt/Modo15.1v1
 	sudo mkdir /opt/Katana5.0v1
-	sudo mkdir /opt/Nuke13.1v1
+	sudo mkdir /opt/Nuke13.1v2
 
-	sudo ./Nuke13.1v1-linux-x86_64.run --prefix=/opt --accept-foundry-eula
+	sudo ./Nuke13.1v2-linux-x86_64.run --prefix=/opt --accept-foundry-eula
 	sudo ./Mari5.0v1-linux-x86-release-64.run --prefix=/opt/Mari5.0v1 --accept-eula
 	sudo ./Modo15.1v1_Linux.run --accept-eula --target /opt/Modo15.1v1
 	cd katana
@@ -389,7 +408,7 @@ function stage3 () {
 	rm ./Modo15.1v1_Linux.run
 	rm ./Mari5.0v1-linux-x86-release-64.run
 	rm -rf ./katana
-	rm ./Nuke13.1v1-linux-x86_64.run
+	rm ./Nuke13.1v2-linux-x86_64.run
 
 
 	echo -e "${GREEN}##########################################"
@@ -444,6 +463,15 @@ function stage3 () {
 	sudo tar -C /opt -zxvf Linux-release.tar.gz
 	sudo mv /opt/rv-centos7-x86-64-* /opt/RV
 	rm Linux-release.tar.gz
+
+	echo -e "${GREEN}##########################################"
+	echo -e "Installing DJV Player..."
+	echo -e "##########################################${NC}"
+	###
+	cd /home/mhamid/bootstrap
+	wget https://phoenixnap.dl.sourceforge.net/project/djv/djv-beta/2.0.8/DJV2-2.0.8-1.x86_64.rpm
+	sudo yum -y install ./DJV2-2.0.8-1.x86_64.rpm
+	rm ./DJV2-2.0.8-1.x86_64.rpm
 
 
 	echo -e "${GREEN}##########################################"
